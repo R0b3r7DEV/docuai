@@ -1,7 +1,11 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { auth } from '@clerk/nextjs/server'
 import { FileText, Zap, MessageSquare, Check } from 'lucide-react'
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const { userId } = await auth()
+  if (userId) redirect('/app/documents')
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Nav */}
