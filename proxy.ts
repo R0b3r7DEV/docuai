@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
 
 const isProtectedRoute = createRouteMatcher([
   '/app(.*)',
@@ -7,7 +8,17 @@ const isProtectedRoute = createRouteMatcher([
   '/api/export(.*)',
 ])
 
+const isAuthRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)'])
+
 export const proxy = clerkMiddleware(async (auth, req) => {
+  const { userId } = await auth()
+
+  // Si está autenticado y va a / o a sign-in/sign-up → redirige a la app
+  if (userId && (req.nextUrl.pathname === '/' || isAuthRoute(req))) {
+    return NextResponse.redirect(new URL('/app/documents', req.url))
+  }
+
+  // Rutas protegidas requieren autenticación
   if (isProtectedRoute(req)) await auth.protect()
 })
 
