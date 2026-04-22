@@ -128,14 +128,14 @@ export function DocumentTable({ documents, isLoading, currentFilters, onFilter, 
       <div className="flex flex-col gap-1.5">
         <Label className="text-xs">Tipo</Label>
         <Select
-          value={currentFilters.type ?? ''}
-          onValueChange={(v) => onFilter({ ...currentFilters, page: 1, type: (v as DocumentFilters['type']) || undefined })}
+          value={currentFilters.type ?? '_all'}
+          onValueChange={(v) => onFilter({ ...currentFilters, page: 1, type: (v === '_all' ? undefined : v as DocumentFilters['type']) })}
         >
           <SelectTrigger className="h-8 w-36 text-xs">
             <SelectValue placeholder="Todos los tipos" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos los tipos</SelectItem>
+            <SelectItem value="_all">Todos los tipos</SelectItem>
             {Object.entries(TYPE_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
           </SelectContent>
         </Select>
@@ -144,14 +144,14 @@ export function DocumentTable({ documents, isLoading, currentFilters, onFilter, 
       <div className="flex flex-col gap-1.5">
         <Label className="text-xs">Categoría</Label>
         <Select
-          value={currentFilters.category ?? ''}
-          onValueChange={(v) => onFilter({ ...currentFilters, page: 1, category: (v as DocumentFilters['category']) || undefined })}
+          value={currentFilters.category ?? '_all'}
+          onValueChange={(v) => onFilter({ ...currentFilters, page: 1, category: (v === '_all' ? undefined : v as DocumentFilters['category']) })}
         >
           <SelectTrigger className="h-8 w-40 text-xs">
             <SelectValue placeholder="Todas las categorías" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todas las categorías</SelectItem>
+            <SelectItem value="_all">Todas las categorías</SelectItem>
             {Object.entries(CATEGORY_LABELS).map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
           </SelectContent>
         </Select>
