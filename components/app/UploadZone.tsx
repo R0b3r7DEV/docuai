@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { Upload, CheckCircle, AlertCircle, Loader2, X, FileText } from 'lucide-react'
+import { Upload, CheckCircle, AlertCircle, Loader2, X, FileText, CloudUpload } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { ACCEPTED_MIME_TYPES, MAX_FILE_SIZE_MB, MAX_FILE_SIZE_BYTES } from '@/types/app'
+import { Progress } from '@/components/ui/progress'
+import { Badge } from '@/components/ui/badge'
 
 interface UploadEntry {
   filename: string
@@ -14,14 +16,14 @@ interface UploadEntry {
   extractedType?: string
 }
 
-interface Props {
-  onUploadComplete?: () => void
-}
-
 const TYPE_LABELS: Record<string, string> = {
   factura: 'Factura', presupuesto: 'Presupuesto', nomina: 'Nómina',
   contrato: 'Contrato', albaran: 'Albarán', extracto_bancario: 'Extracto',
   balance: 'Balance', otro: 'Otro',
+}
+
+interface Props {
+  onUploadComplete?: () => void
 }
 
 export function UploadZone({ onUploadComplete }: Props) {
@@ -53,26 +55,16 @@ export function UploadZone({ onUploadComplete }: Props) {
         const { document } = await res.json()
         if (document.status === 'done') {
           stopPolling(documentId)
-          update(filename, {
-            status: 'done',
-            progress: 100,
-            extractedType: document.extraction?.type ?? undefined,
-          })
+          update(filename, { status: 'done', progress: 100, extractedType: document.extraction?.type ?? undefined })
           onUploadComplete?.()
         } else if (document.status === 'error') {
           stopPolling(documentId)
-          update(filename, {
-            status: 'error',
-            error: document.error_message ?? 'Error al procesar el documento',
-          })
+          update(filename, { status: 'error', error: document.error_message ?? 'Error al procesar el documento' })
           onUploadComplete?.()
         }
-      } catch {
-        // Ignore transient polling errors
-      }
+      } catch { /* transient */ }
     }
-
-    poll() // First check immediately
+    poll()
     pollingRefs.current[documentId] = setInterval(poll, 3000)
   }, [onUploadComplete, stopPolling, update])
 
@@ -80,7 +72,7 @@ export function UploadZone({ onUploadComplete }: Props) {
     if (!(ACCEPTED_MIME_TYPES as readonly string[]).includes(file.type)) {
       setUploads(prev => [...prev.filter(u => u.filename !== file.name), {
         filename: file.name, progress: 0, status: 'error',
-        error: `Tipo no permitido. Usa PDF, imagen o texto plano.`,
+        error: 'Tipo no permitido. Usa PDF, imagen o texto plano.',
       }])
       return
     }
@@ -92,62 +84,41 @@ export function UploadZone({ onUploadComplete }: Props) {
       return
     }
 
-    setUploads(prev => [
-      ...prev.filter(u => u.filename !== file.name),
-      { filename: file.name, progress: 0, status: 'uploading' },
-    ])
+    setUploads(prev => [...prev.filter(u => u.filename !== file.name),
+      { filename: file.name, progress: 0, status: 'uploading' }])
 
     try {
       const formData = new FormData()
       formData.append('file', file)
-
       const xhr = new XMLHttpRequest()
       xhr.upload.onprogress = (e) => {
-        if (e.lengthComputable)
-          update(file.name, { progress: Math.round((e.loaded / e.total) * 90) })
+        if (e.lengthComputable) update(file.name, { progress: Math.round((e.loaded / e.total) * 90) })
       }
-
       const response = await new Promise<Response>((resolve, reject) => {
         xhr.onload = () => resolve(new Response(xhr.responseText, { status: xhr.status }))
         xhr.onerror = () => reject(new Error('Error de red al subir el archivo'))
         xhr.open('POST', '/api/documents/upload')
         xhr.send(formData)
       })
-
       if (!response.ok) {
         const body = await response.json().catch(() => ({}))
         throw new Error(body.error ?? `Error ${response.status} al subir`)
       }
-
       const { documentId } = await response.json()
       update(file.name, { status: 'processing', progress: 100, documentId })
       startPolling(file.name, documentId)
     } catch (err) {
-      update(file.name, {
-        status: 'error',
-        error: err instanceof Error ? err.message : 'Error desconocido',
-      })
+      update(file.name, { status: 'error', error: err instanceof Error ? err.message : 'Error desconocido' })
     }
   }, [update, startPolling])
 
-  const handleFiles = useCallback((files: File[]) => {
-    files.forEach(uploadFile)
-  }, [uploadFile])
-
+  const handleFiles = useCallback((files: File[]) => { files.forEach(uploadFile) }, [uploadFile])
   const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-    handleFiles(Array.from(e.dataTransfer.files))
+    e.preventDefault(); setIsDragging(false); handleFiles(Array.from(e.dataTransfer.files))
   }, [handleFiles])
-
-  const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true) }
-  const handleDragLeave = () => setIsDragging(false)
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleFiles(Array.from(e.target.files ?? []))
-    e.target.value = ''
+    handleFiles(Array.from(e.target.files ?? [])); e.target.value = ''
   }
-
   const removeEntry = (filename: string) => {
     setUploads(prev => {
       const entry = prev.find(u => u.filename === filename)
@@ -158,95 +129,72 @@ export function UploadZone({ onUploadComplete }: Props) {
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Drop zone */}
       <label
         className={cn(
-          'flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 cursor-pointer transition-colors',
+          'flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed p-10 cursor-pointer transition-all duration-200',
           isDragging
-            ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
-            : 'border-muted-foreground/30 hover:border-primary/50 hover:bg-muted/30'
+            ? 'border-primary bg-primary/5 scale-[1.01]'
+            : 'border-border hover:border-primary/50 hover:bg-muted/40'
         )}
         onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
+        onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+        onDragLeave={() => setIsDragging(false)}
       >
-        <Upload className={cn('h-8 w-8 transition-colors', isDragging ? 'text-green-600' : 'text-muted-foreground')} />
+        <div className={cn(
+          'w-14 h-14 rounded-2xl flex items-center justify-center transition-colors',
+          isDragging ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+        )}>
+          {isDragging ? <CloudUpload className="h-7 w-7" /> : <Upload className="h-7 w-7" />}
+        </div>
         <div className="text-center">
-          <p className="font-medium">
-            {isDragging ? 'Suelta los archivos aquí' : 'Arrastra archivos aquí o haz clic para seleccionar'}
+          <p className="font-semibold text-sm">
+            {isDragging ? 'Suelta los archivos aquí' : 'Arrastra archivos o haz clic para seleccionar'}
           </p>
-          <p className="text-sm text-muted-foreground mt-1">
-            PDF · Imagen · Texto · Máx. {MAX_FILE_SIZE_MB} MB por archivo
+          <p className="text-xs text-muted-foreground mt-1.5">
+            PDF · JPEG · PNG · WebP · TXT — Máx. {MAX_FILE_SIZE_MB} MB por archivo
           </p>
         </div>
-        <input
-          type="file"
-          className="sr-only"
-          multiple
-          accept={ACCEPTED_MIME_TYPES.join(',')}
-          onChange={handleChange}
-        />
+        <input type="file" className="sr-only" multiple accept={ACCEPTED_MIME_TYPES.join(',')} onChange={handleChange} />
       </label>
 
-      {/* Upload list */}
       {uploads.length > 0 && (
         <ul className="flex flex-col gap-2">
           {uploads.map((u) => (
-            <li key={u.filename} className="flex items-center gap-3 rounded-lg border bg-muted/20 px-3 py-2 text-sm">
+            <li key={u.filename} className="flex items-center gap-3 rounded-lg border bg-card px-4 py-3">
               {/* Icon */}
-              <div className="shrink-0 w-5 flex justify-center">
-                {u.status === 'uploading'   && <Loader2 className="h-4 w-4 animate-spin text-blue-500" />}
-                {u.status === 'processing'  && <Loader2 className="h-4 w-4 animate-spin text-amber-500" />}
-                {u.status === 'done'        && <CheckCircle className="h-4 w-4 text-green-600" />}
-                {u.status === 'error'       && <AlertCircle className="h-4 w-4 text-red-500" />}
-                {u.status === 'waiting'     && <FileText className="h-4 w-4 text-muted-foreground" />}
+              <div className="shrink-0 w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                {u.status === 'uploading'  && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
+                {u.status === 'processing' && <Loader2 className="h-4 w-4 animate-spin text-amber-500" />}
+                {u.status === 'done'       && <CheckCircle className="h-4 w-4 text-emerald-500" />}
+                {u.status === 'error'      && <AlertCircle className="h-4 w-4 text-destructive" />}
+                {u.status === 'waiting'    && <FileText className="h-4 w-4 text-muted-foreground" />}
               </div>
 
-              {/* Name + sub-info */}
+              {/* Name + info */}
               <div className="flex-1 min-w-0">
-                <p className="truncate font-medium leading-tight">{u.filename}</p>
-                {u.status === 'error' && (
-                  <p className="text-xs text-red-600 mt-0.5">{u.error}</p>
-                )}
+                <p className="truncate text-sm font-medium">{u.filename}</p>
                 {u.status === 'uploading' && (
-                  <p className="text-xs text-muted-foreground mt-0.5">Subiendo… {u.progress}%</p>
+                  <div className="mt-1.5">
+                    <Progress value={u.progress} className="h-1" />
+                  </div>
                 )}
-                {u.status === 'processing' && (
-                  <p className="text-xs text-amber-600 mt-0.5">Procesando con IA…</p>
-                )}
+                {u.status === 'error'      && <p className="text-xs text-destructive mt-0.5">{u.error}</p>}
+                {u.status === 'processing' && <p className="text-xs text-amber-600 mt-0.5">Procesando con IA…</p>}
                 {u.status === 'done' && u.extractedType && (
-                  <span className="inline-block mt-0.5 text-xs rounded-full bg-green-100 text-green-800 px-2 py-0.5 font-medium">
+                  <Badge variant="secondary" className="mt-1 text-[10px] h-4 px-1.5">
                     {TYPE_LABELS[u.extractedType] ?? u.extractedType}
-                  </span>
+                  </Badge>
                 )}
                 {u.status === 'done' && !u.extractedType && (
-                  <p className="text-xs text-green-700 mt-0.5">Completado</p>
+                  <p className="text-xs text-emerald-600 mt-0.5">Completado</p>
                 )}
               </div>
 
-              {/* Progress bar */}
-              {(u.status === 'uploading' || u.status === 'processing') && (
-                <div className="w-20 shrink-0">
-                  <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                    <div
-                      className={cn(
-                        'h-full rounded-full transition-all duration-300',
-                        u.status === 'uploading' ? 'bg-blue-500' : 'w-full bg-amber-400 animate-pulse'
-                      )}
-                      style={u.status === 'uploading' ? { width: `${u.progress}%` } : undefined}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Remove button */}
               {(u.status === 'done' || u.status === 'error') && (
-                <button
-                  onClick={() => removeEntry(u.filename)}
-                  className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
-                  title="Eliminar de la lista"
-                >
-                  <X className="h-4 w-4" />
+                <button onClick={() => removeEntry(u.filename)}
+                  className="shrink-0 text-muted-foreground hover:text-foreground transition-colors p-1 rounded"
+                  title="Quitar de la lista">
+                  <X className="h-3.5 w-3.5" />
                 </button>
               )}
             </li>

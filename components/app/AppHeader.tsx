@@ -9,11 +9,17 @@ interface Props {
 
 export function AppHeader({ title, actions }: Props) {
   return (
-    <header className="h-14 border-b flex items-center justify-between px-6 shrink-0">
-      <h1 className="font-semibold text-lg">{title}</h1>
-      <div className="flex items-center gap-4">
+    <header className="h-16 border-b bg-background flex items-center justify-between px-6 shrink-0">
+      <h1 className="font-semibold text-base tracking-tight">{title}</h1>
+      <div className="flex items-center gap-3">
         {actions}
-        <UserButton />
+        <UserButton
+          appearance={{
+            elements: {
+              avatarBox: 'w-8 h-8',
+            },
+          }}
+        />
       </div>
     </header>
   )
