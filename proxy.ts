@@ -6,11 +6,19 @@ const isProtectedRoute = createRouteMatcher([
   '/api/documents(.*)',
   '/api/chat(.*)',
   '/api/export(.*)',
+  '/api/settings(.*)',
+])
+
+const isPublicRoute = createRouteMatcher([
+  '/api/webhooks/(.*)',
 ])
 
 const isAuthRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)'])
 
 export const proxy = clerkMiddleware(async (auth, req) => {
+  // Webhooks son públicos — Inngest y Clerk verifican con sus propias firmas
+  if (isPublicRoute(req)) return
+
   const { userId } = await auth()
 
   // Si está autenticado y va a / o a sign-in/sign-up → redirige a la app
