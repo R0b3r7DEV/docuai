@@ -7,6 +7,7 @@ const isProtectedRoute = createRouteMatcher([
   '/api/chat(.*)',
   '/api/export(.*)',
   '/api/settings(.*)',
+  '/api/stripe/(.*)',
 ])
 
 const isPublicRoute = createRouteMatcher([

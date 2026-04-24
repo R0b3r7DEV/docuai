@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import type { OrgPlan } from '@/types/database'
 
 const PLAN_LABELS: Record<OrgPlan, string> = {
+  trial: 'Prueba',
   free: 'Gratis',
   pro: 'Pro',
   enterprise: 'Enterprise',

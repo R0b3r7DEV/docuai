@@ -161,62 +161,55 @@ export default async function LandingPage() {
 
         {/* ── Pricing ──────────────────────────────────────────────── */}
         <section id="precios" className="py-24 px-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">Precios sencillos</h2>
-              <p className="text-muted-foreground">Empieza gratis, escala cuando lo necesites</p>
+          <div className="max-w-lg mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">Un plan. Sin sorpresas.</h2>
+              <p className="text-muted-foreground">Prueba gratis con 2 documentos. Sin tarjeta de crédito.</p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-              {/* Free */}
-              <div className="rounded-2xl border bg-card p-8 flex flex-col gap-6">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Gratis</p>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-5xl font-bold tracking-tight">0 €</span>
-                    <span className="text-muted-foreground text-sm">/mes</span>
-                  </div>
-                </div>
-                <ul className="flex flex-col gap-3 text-sm">
-                  {['50 documentos al mes', 'Chat ilimitado', 'Exportación Excel', 'PDF, imágenes y texto'].map((f) => (
-                    <li key={f} className="flex items-center gap-2.5">
-                      <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                        <Check className="h-2.5 w-2.5 text-primary" />
-                      </div>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Button variant="outline" className="mt-auto" asChild>
-                  <Link href="/sign-up">Empezar gratis</Link>
-                </Button>
+            <div className="rounded-2xl border-2 border-primary bg-card p-8 flex flex-col gap-6 relative shadow-lg">
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                <Badge className="px-3 py-0.5 text-xs font-medium gap-1.5">
+                  <Sparkles className="h-3 w-3" />
+                  Prueba gratis con 2 documentos
+                </Badge>
               </div>
 
-              {/* Pro */}
-              <div className="rounded-2xl border-2 border-primary bg-card p-8 flex flex-col gap-6 relative">
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <Badge className="px-3 py-0.5 text-xs font-medium">Más popular</Badge>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Plan Pro</p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-5xl font-bold tracking-tight">10 €</span>
+                  <span className="text-muted-foreground text-sm">/mes</span>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Pro</p>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-5xl font-bold tracking-tight">29 €</span>
-                    <span className="text-muted-foreground text-sm">/mes</span>
-                  </div>
-                </div>
-                <ul className="flex flex-col gap-3 text-sm">
-                  {['500 documentos al mes', 'Chat ilimitado', 'Exportación Excel', 'PDF, imágenes y texto', 'Soporte prioritario'].map((f) => (
-                    <li key={f} className="flex items-center gap-2.5">
-                      <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                        <Check className="h-2.5 w-2.5 text-primary" />
-                      </div>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Button className="mt-auto" asChild>
-                  <Link href="/sign-up">Empezar con Pro</Link>
-                </Button>
+              </div>
+
+              <ul className="flex flex-col gap-3 text-sm">
+                {[
+                  'Hasta 20 documentos al mes',
+                  'Facturas, presupuestos, nóminas y contratos',
+                  'Chat con IA sobre todos tus documentos',
+                  'Exportación a Excel ilimitada',
+                  'Soporte por email',
+                ].map((f) => (
+                  <li key={f} className="flex items-center gap-2.5">
+                    <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                      <Check className="h-2.5 w-2.5 text-primary" />
+                    </div>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+
+              <Button size="lg" className="w-full h-12 text-base" asChild>
+                <Link href="/sign-up">
+                  Empezar gratis
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </Button>
+
+              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <Shield className="h-3.5 w-3.5 text-primary" />
+                Sin tarjeta de crédito para empezar · Pago seguro con Stripe
               </div>
             </div>
           </div>

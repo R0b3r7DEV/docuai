@@ -3,18 +3,28 @@
 import { useState, useEffect, useCallback } from 'react'
 import { SignOutButton } from '@clerk/nextjs'
 import { UsageMeter } from '@/components/app/UsageMeter'
-import type { OrgPlan } from '@/types/database'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { AlertTriangle, ArrowRight, CheckCircle, CreditCard, XCircle } from 'lucide-react'
+import Link from 'next/link'
+import type { OrgPlan, SubscriptionStatus } from '@/types/database'
+import { TRIAL_DOC_LIMIT, PRO_DOC_LIMIT } from '@/lib/stripe/constants'
 
-interface SettingsData {
-  org: { id: string; name: string; slug: string; plan: OrgPlan; created_at: string }
-  user: { id: string; email: string; full_name: string | null; role: string }
-  usage: { used: number; limit: number; plan: string }
+interface OrgData {
+  id: string
+  name: string
+  slug: string
+  plan: OrgPlan
+  created_at: string
+  subscription_status: SubscriptionStatus
+  trial_docs_used: number
+  current_period_end: string | null
 }
 
-const PLAN_LABELS: Record<string, string> = {
-  free: 'Gratis',
-  pro: 'Pro',
-  enterprise: 'Enterprise',
+interface SettingsData {
+  org: OrgData
+  user: { id: string; email: string; full_name: string | null; role: string }
+  usage: { used: number; limit: number; plan: string }
 }
 
 export default function SettingsPage() {
@@ -23,6 +33,7 @@ export default function SettingsPage() {
   const [orgName, setOrgName] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [portalLoading, setPortalLoading] = useState(false)
 
   const load = useCallback(async () => {
     try {
@@ -61,11 +72,22 @@ export default function SettingsPage() {
     }
   }
 
+  const openPortal = async () => {
+    setPortalLoading(true)
+    try {
+      const res = await fetch('/api/stripe/portal', { method: 'POST' })
+      const body = await res.json() as { url?: string; error?: string }
+      if (body.url) window.location.href = body.url
+    } finally {
+      setPortalLoading(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="flex flex-col gap-6 max-w-2xl animate-pulse">
         <div className="h-8 w-48 rounded bg-muted" />
-        {[1, 2, 3].map((i) => (
+        {[1, 2, 3, 4].map((i) => (
           <div key={i} className="rounded-lg border p-6 flex flex-col gap-4">
             <div className="h-5 w-32 rounded bg-muted" />
             <div className="h-4 w-full rounded bg-muted" />
@@ -76,20 +98,111 @@ export default function SettingsPage() {
     )
   }
 
+  const plan = data?.org.plan ?? 'trial'
+  const status = data?.org.subscription_status ?? 'trialing'
+  const trialUsed = data?.org.trial_docs_used ?? 0
+  const periodEnd = data?.org.current_period_end
+    ? new Date(data.org.current_period_end).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+    : null
+
   return (
     <div className="flex flex-col gap-6 max-w-2xl">
       <h2 className="text-2xl font-semibold">Configuración</h2>
 
-      {/* Organización */}
-      <section className="rounded-lg border p-6 flex flex-col gap-4">
+      {/* ── Suscripción ─────────────────────────────────────────────── */}
+      <section className="rounded-xl border p-6 flex flex-col gap-5">
         <div className="flex items-center justify-between">
-          <h3 className="font-medium">Organización</h3>
-          {data && (
-            <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-              {PLAN_LABELS[data.org.plan] ?? data.org.plan}
-            </span>
+          <h3 className="font-medium">Suscripción</h3>
+          {(plan === 'trial' || plan === 'free') && (
+            <Badge variant="secondary">Prueba gratuita</Badge>
+          )}
+          {plan === 'pro' && status === 'active' && (
+            <Badge className="bg-emerald-500 text-white hover:bg-emerald-500">Pro activo</Badge>
+          )}
+          {plan === 'pro' && status === 'past_due' && (
+            <Badge variant="destructive">Pago pendiente</Badge>
+          )}
+          {(status === 'canceled') && (
+            <Badge variant="outline" className="text-muted-foreground">Cancelado</Badge>
           )}
         </div>
+
+        {/* Trial */}
+        {(plan === 'trial' || plan === 'free') && (
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <div className="flex justify-between text-sm mb-1.5">
+                <span className="text-muted-foreground">Documentos usados</span>
+                <span className="font-medium">{trialUsed} / {TRIAL_DOC_LIMIT}</span>
+              </div>
+              <div className="h-2 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-primary transition-all"
+                  style={{ width: `${Math.min(100, (trialUsed / TRIAL_DOC_LIMIT) * 100)}%` }}
+                />
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              El plan de prueba incluye {TRIAL_DOC_LIMIT} documentos. Suscríbete al Plan Pro para procesar hasta {PRO_DOC_LIMIT} documentos al mes.
+            </p>
+            <Button asChild className="w-full sm:w-auto gap-2">
+              <Link href="/app/upgrade">
+                Suscribirse por 10 €/mes <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        )}
+
+        {/* Pro active */}
+        {plan === 'pro' && status === 'active' && (
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2 text-sm text-emerald-700">
+              <CheckCircle className="h-4 w-4 shrink-0" />
+              <span>Plan Pro activo — hasta {PRO_DOC_LIMIT} documentos al mes</span>
+            </div>
+            {periodEnd && (
+              <p className="text-sm text-muted-foreground">Próxima renovación: <span className="font-medium text-foreground">{periodEnd}</span></p>
+            )}
+            <Button variant="outline" className="w-full sm:w-auto gap-2" onClick={openPortal} disabled={portalLoading}>
+              <CreditCard className="h-4 w-4" />
+              {portalLoading ? 'Abriendo portal…' : 'Gestionar suscripción'}
+            </Button>
+          </div>
+        )}
+
+        {/* Past due */}
+        {plan === 'pro' && status === 'past_due' && (
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
+              <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
+              <span>Tu suscripción tiene un pago pendiente. Actualiza tu método de pago para no perder el acceso.</span>
+            </div>
+            <Button variant="destructive" className="w-full sm:w-auto gap-2" onClick={openPortal} disabled={portalLoading}>
+              <CreditCard className="h-4 w-4" />
+              {portalLoading ? 'Abriendo portal…' : 'Actualizar método de pago'}
+            </Button>
+          </div>
+        )}
+
+        {/* Canceled */}
+        {status === 'canceled' && (
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3 rounded-lg bg-muted px-4 py-3 text-sm text-muted-foreground">
+              <XCircle className="h-4 w-4 shrink-0" />
+              <span>Tu suscripción fue cancelada. Reactívala para volver a procesar documentos.</span>
+            </div>
+            <Button asChild className="w-full sm:w-auto gap-2">
+              <Link href="/app/upgrade">
+                Reactivar Plan Pro <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        )}
+      </section>
+
+      {/* ── Organización ────────────────────────────────────────────── */}
+      <section className="rounded-xl border p-6 flex flex-col gap-4">
+        <h3 className="font-medium">Organización</h3>
 
         <form onSubmit={handleSaveOrg} className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
@@ -131,8 +244,8 @@ export default function SettingsPage() {
         </form>
       </section>
 
-      {/* Uso */}
-      <section className="rounded-lg border p-6 flex flex-col gap-4">
+      {/* ── Uso ─────────────────────────────────────────────────────── */}
+      <section className="rounded-xl border p-6 flex flex-col gap-4">
         <h3 className="font-medium">Uso este mes</h3>
         {data ? (
           <UsageMeter
@@ -146,8 +259,8 @@ export default function SettingsPage() {
         )}
       </section>
 
-      {/* Cuenta */}
-      <section className="rounded-lg border p-6 flex flex-col gap-4">
+      {/* ── Cuenta ──────────────────────────────────────────────────── */}
+      <section className="rounded-xl border p-6 flex flex-col gap-4">
         <h3 className="font-medium">Cuenta</h3>
         {data && (
           <div className="flex flex-col gap-2 text-sm">

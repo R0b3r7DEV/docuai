@@ -77,10 +77,8 @@ export async function POST(req: NextRequest) {
   }
 
   const fullName = [first_name, last_name].filter(Boolean).join(' ') || null
-
   const baseSlug = slugFromEmail(primaryEmail)
 
-  // Check if org with this slug already exists and create a unique one
   const { data: existingOrg } = await supabaseServer
     .from('organizations')
     .select('id')
@@ -89,9 +87,16 @@ export async function POST(req: NextRequest) {
 
   const slug = existingOrg ? ensureUniqSlug(baseSlug) : baseSlug
 
+  // New accounts start on 'trial' plan with 2 free documents
   const { data: org, error: orgError } = await supabaseServer
     .from('organizations')
-    .insert({ name: primaryEmail, slug, plan: 'free' })
+    .insert({
+      name: primaryEmail,
+      slug,
+      plan: 'trial',
+      subscription_status: 'trialing',
+      trial_docs_used: 0,
+    })
     .select()
     .single()
 
@@ -112,7 +117,6 @@ export async function POST(req: NextRequest) {
 
   if (userError) {
     console.error('[Clerk webhook] Failed to create user:', userError)
-    // Rollback org
     await supabaseServer.from('organizations').delete().eq('id', org.id)
     return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
   }

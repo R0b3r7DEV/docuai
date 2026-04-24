@@ -13,7 +13,7 @@ export async function GET() {
     const [orgResult, usageResult] = await Promise.all([
       supabaseServer
         .from('organizations')
-        .select('id, name, slug, plan, created_at')
+        .select('id, name, slug, plan, created_at, subscription_status, trial_docs_used, stripe_customer_id, stripe_subscription_id, current_period_end')
         .eq('id', user.organization_id)
         .single(),
       supabaseServer
@@ -26,15 +26,17 @@ export async function GET() {
 
     if (orgResult.error || !orgResult.data) throw orgResult.error ?? new Error('Org not found')
 
-    const planLimits: Record<string, number> = { free: 50, pro: 500, enterprise: Infinity }
     const plan = orgResult.data.plan as string
-    const limit = planLimits[plan] ?? 50
+    const { TRIAL_DOC_LIMIT, PRO_DOC_LIMIT } = await import('@/lib/stripe/constants')
+    const limit = plan === 'trial' || plan === 'free' ? TRIAL_DOC_LIMIT : plan === 'pro' ? PRO_DOC_LIMIT : 50
 
     return NextResponse.json({
       org: orgResult.data,
       user: { id: user.id, email: user.email, full_name: user.full_name, role: user.role },
       usage: {
-        used: usageResult.count ?? 0,
+        used: plan === 'trial' || plan === 'free'
+          ? (orgResult.data.trial_docs_used ?? 0)
+          : (usageResult.count ?? 0),
         limit,
         plan,
       },

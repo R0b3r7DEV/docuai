@@ -1,6 +1,7 @@
 // Tipos que reflejan el schema de Supabase — actualizar tras cambios en migraciones
 
-export type OrgPlan = 'free' | 'pro' | 'enterprise'
+export type OrgPlan = 'trial' | 'free' | 'pro' | 'enterprise'
+export type SubscriptionStatus = 'trialing' | 'active' | 'past_due' | 'canceled' | 'incomplete'
 export type UserRole = 'owner' | 'admin' | 'member'
 export type DocumentStatus = 'pending' | 'processing' | 'done' | 'error'
 export type ExtractionType =
@@ -27,6 +28,12 @@ export interface Organization {
   name: string
   slug: string
   plan: OrgPlan
+  // Stripe billing fields
+  stripe_customer_id: string | null
+  stripe_subscription_id: string | null
+  subscription_status: SubscriptionStatus
+  trial_docs_used: number
+  current_period_end: string | null
   created_at: string
   updated_at: string
 }
