@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Webhook } from 'svix'
 import { supabaseServer } from '@/lib/supabase/server'
+import { sendEmail } from '@/lib/email/sender'
+import { buildWelcomeEmail } from '@/lib/email/templates'
 
 interface ClerkEmailAddress {
   email_address: string
@@ -120,6 +122,10 @@ export async function POST(req: NextRequest) {
     await supabaseServer.from('organizations').delete().eq('id', org.id)
     return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
   }
+
+  // Send welcome email (non-blocking)
+  const { subject, html } = buildWelcomeEmail(fullName)
+  void sendEmail({ to: primaryEmail, subject, html })
 
   return NextResponse.json({ received: true, userId: clerkUserId, orgId: org.id })
 }

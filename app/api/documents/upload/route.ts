@@ -10,6 +10,11 @@ import { handleApiError, ValidationError } from '@/lib/utils/errors'
 import { validateMimeType, validateFileSize } from '@/lib/utils/validators'
 import { getAuthenticatedUser } from '@/lib/utils/auth'
 import { checkDocumentLimit, incrementTrialDocs } from '@/lib/stripe/limits'
+import { sendEmail } from '@/lib/email/sender'
+import { buildLimitReachedEmail } from '@/lib/email/templates'
+
+// In-memory dedup: orgId → last limit-email timestamp (resets on cold start)
+const limitEmailSentAt: Record<string, number> = {}
 
 const UPLOAD_RATE_LIMIT = 20
 const RATE_WINDOW_MS = 60 * 60 * 1000
@@ -31,6 +36,15 @@ export async function POST(req: NextRequest) {
     // ── Document limit check (trial / pro) ─────────────────────────────
     const limitResult = await checkDocumentLimit(user.organization_id)
     if (!limitResult.allowed) {
+      // Send limit email max once per 24h per org
+      const lastSent = limitEmailSentAt[user.organization_id] ?? 0
+      if (Date.now() - lastSent > 24 * 60 * 60 * 1000) {
+        limitEmailSentAt[user.organization_id] = Date.now()
+        const { subject, html } = buildLimitReachedEmail({
+          used: limitResult.used, limit: limitResult.limit, plan: limitResult.plan,
+        })
+        void sendEmail({ to: user.email, subject, html })
+      }
       return NextResponse.json(
         {
           error: 'límite_alcanzado',

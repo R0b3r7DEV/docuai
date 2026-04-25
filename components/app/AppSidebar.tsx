@@ -15,6 +15,7 @@ interface OrgInfo {
 }
 
 const mainNavItems = [
+  { href: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/app/documents', label: 'Documentos', icon: FileText },
   { href: '/app/chat', label: 'Chat IA', icon: MessageSquare },
   { href: '/app/settings', label: 'Configuración', icon: Settings },
@@ -49,7 +50,7 @@ export function AppSidebar() {
     <aside className="w-60 shrink-0 border-r bg-sidebar flex flex-col">
       {/* Logo */}
       <div className="h-16 flex items-center px-5 border-b shrink-0">
-        <Link href="/app/documents" className="flex items-center gap-2.5">
+        <Link href="/app/dashboard" className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center shrink-0">
             <FileText className="h-4 w-4 text-primary-foreground" />
           </div>

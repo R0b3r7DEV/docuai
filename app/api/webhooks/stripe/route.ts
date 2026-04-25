@@ -5,6 +5,8 @@ import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe/client'
 import { supabaseServer } from '@/lib/supabase/server'
 import { GESTORIA_MAX_CLIENTS, GESTORIA_PRO_MAX_CLIENTS } from '@/lib/stripe/constants'
+import { sendEmail } from '@/lib/email/sender'
+import { buildPaymentFailedEmail } from '@/lib/email/templates'
 
 async function getOrgIdFromSubscription(subscriptionId: string): Promise<string | null> {
   const subscription = await stripe.subscriptions.retrieve(subscriptionId)
@@ -110,6 +112,18 @@ export async function POST(req: NextRequest) {
           .from('organizations')
           .update({ subscription_status: 'past_due' })
           .eq('id', orgId)
+
+        // Send payment failed email to org owner
+        const { data: ownerUser } = await supabaseServer
+          .from('users')
+          .select('email')
+          .eq('organization_id', orgId)
+          .eq('role', 'owner')
+          .single()
+        if (ownerUser?.email) {
+          const { subject, html } = buildPaymentFailedEmail()
+          void sendEmail({ to: ownerUser.email, subject, html })
+        }
         break
       }
 
