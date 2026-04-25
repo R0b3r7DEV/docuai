@@ -9,6 +9,8 @@ const PLAN_LABELS: Record<OrgPlan, string> = {
   trial: 'Prueba',
   free: 'Gratis',
   pro: 'Pro',
+  gestoria: 'Gestoría',
+  gestoria_pro: 'Gestoría Pro',
   enterprise: 'Enterprise',
 }
 

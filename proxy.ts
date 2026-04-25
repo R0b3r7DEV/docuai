@@ -3,15 +3,19 @@ import { NextResponse } from 'next/server'
 
 const isProtectedRoute = createRouteMatcher([
   '/app(.*)',
+  '/gestoria(.*)',
+  '/onboarding(.*)',
   '/api/documents(.*)',
   '/api/chat(.*)',
   '/api/export(.*)',
   '/api/settings(.*)',
   '/api/stripe/(.*)',
+  '/api/gestoria(.*)',
 ])
 
 const isPublicRoute = createRouteMatcher([
   '/api/webhooks/(.*)',
+  '/invite/(.*)',
 ])
 
 const isAuthRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)'])

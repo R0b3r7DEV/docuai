@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { AppSidebar } from '@/components/app/AppSidebar'
 import { AppHeader } from '@/components/app/AppHeader'
+import { ImpersonationBanner } from '@/components/app/ImpersonationBanner'
 
 export const metadata: Metadata = {
   title: { default: 'Aplicación | DocuAI', template: '%s | DocuAI' },
@@ -12,6 +13,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="flex h-screen overflow-hidden">
       <AppSidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
+        <ImpersonationBanner />
         <AppHeader title="DocuAI" />
         <main className="flex-1 overflow-auto p-6">{children}</main>
       </div>

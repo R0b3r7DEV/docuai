@@ -4,10 +4,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe/client'
 import { supabaseServer } from '@/lib/supabase/server'
+import { GESTORIA_MAX_CLIENTS, GESTORIA_PRO_MAX_CLIENTS } from '@/lib/stripe/constants'
 
 async function getOrgIdFromSubscription(subscriptionId: string): Promise<string | null> {
   const subscription = await stripe.subscriptions.retrieve(subscriptionId)
   return (subscription.metadata?.organization_id as string) ?? null
+}
+
+async function getPlanFromSubscription(subscriptionId: string): Promise<string> {
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+  return (subscription.metadata?.plan as string) ?? 'pro'
 }
 
 export async function POST(req: NextRequest) {
@@ -34,6 +40,7 @@ export async function POST(req: NextRequest) {
         const session = event.data.object as Stripe.Checkout.Session
         const orgId = session.metadata?.organization_id
         const subscriptionId = session.subscription as string | null
+        const plan = (session.metadata?.plan ?? 'pro') as string
 
         if (!orgId || !subscriptionId) break
 
@@ -43,14 +50,29 @@ export async function POST(req: NextRequest) {
           ? new Date(rawSub.current_period_end * 1000).toISOString()
           : null
 
+        // Determine gestoria settings based on plan
+        const isGestoria = plan === 'gestoria' || plan === 'gestoria_pro'
+        const maxClients = plan === 'gestoria'
+          ? GESTORIA_MAX_CLIENTS
+          : plan === 'gestoria_pro'
+            ? GESTORIA_PRO_MAX_CLIENTS
+            : 0
+
+        const updateData: Record<string, unknown> = {
+          plan,
+          stripe_subscription_id: subscriptionId,
+          subscription_status: 'active',
+          current_period_end: periodEnd,
+        }
+
+        if (isGestoria) {
+          updateData.org_type = 'gestoria'
+          updateData.max_clients = maxClients
+        }
+
         await supabaseServer
           .from('organizations')
-          .update({
-            plan: 'pro',
-            stripe_subscription_id: subscriptionId,
-            subscription_status: 'active',
-            current_period_end: periodEnd,
-          })
+          .update(updateData)
           .eq('id', orgId)
         break
       }
@@ -64,17 +86,14 @@ export async function POST(req: NextRequest) {
         if (!orgId) break
 
         const subscription = await stripe.subscriptions.retrieve(subscriptionId)
-        const rawSub2 = subscription as unknown as { current_period_end?: number }
-        const periodEnd2 = rawSub2.current_period_end
-          ? new Date(rawSub2.current_period_end * 1000).toISOString()
+        const rawSub = subscription as unknown as { current_period_end?: number }
+        const periodEnd = rawSub.current_period_end
+          ? new Date(rawSub.current_period_end * 1000).toISOString()
           : null
 
         await supabaseServer
           .from('organizations')
-          .update({
-            subscription_status: 'active',
-            current_period_end: periodEnd2,
-          })
+          .update({ subscription_status: 'active', current_period_end: periodEnd })
           .eq('id', orgId)
         break
       }
@@ -99,6 +118,14 @@ export async function POST(req: NextRequest) {
         const orgId = subscription.metadata?.organization_id
         if (!orgId) break
 
+        const { data: org } = await supabaseServer
+          .from('organizations')
+          .select('org_type')
+          .eq('id', orgId)
+          .single()
+
+        const wasGestoria = org?.org_type === 'gestoria'
+
         await supabaseServer
           .from('organizations')
           .update({
@@ -107,6 +134,7 @@ export async function POST(req: NextRequest) {
             stripe_subscription_id: null,
             current_period_end: null,
             trial_docs_used: 0,
+            ...(wasGestoria ? { org_type: 'empresa', max_clients: 0 } : {}),
           })
           .eq('id', orgId)
         break
@@ -117,7 +145,6 @@ export async function POST(req: NextRequest) {
     }
   } catch (err) {
     console.error(`[Stripe webhook] Error handling ${event.type}:`, err)
-    // Return 200 so Stripe doesn't retry — log the error for investigation
   }
 
   return NextResponse.json({ received: true })

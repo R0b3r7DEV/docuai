@@ -13,7 +13,7 @@ export async function GET() {
     const [orgResult, usageResult] = await Promise.all([
       supabaseServer
         .from('organizations')
-        .select('id, name, slug, plan, created_at, subscription_status, trial_docs_used, stripe_customer_id, stripe_subscription_id, current_period_end')
+        .select('id, name, slug, plan, org_type, gestoria_id, created_at, subscription_status, trial_docs_used, stripe_customer_id, stripe_subscription_id, current_period_end')
         .eq('id', user.organization_id)
         .single(),
       supabaseServer
@@ -27,11 +27,26 @@ export async function GET() {
     if (orgResult.error || !orgResult.data) throw orgResult.error ?? new Error('Org not found')
 
     const plan = orgResult.data.plan as string
-    const { TRIAL_DOC_LIMIT, PRO_DOC_LIMIT } = await import('@/lib/stripe/constants')
-    const limit = plan === 'trial' || plan === 'free' ? TRIAL_DOC_LIMIT : plan === 'pro' ? PRO_DOC_LIMIT : 50
+    const { TRIAL_DOC_LIMIT, PRO_DOC_LIMIT, GESTORIA_DOCS_PER_CLIENT } = await import('@/lib/stripe/constants')
+    const isGestoriaClient = !!(orgResult.data.gestoria_id)
+    const limit = isGestoriaClient
+      ? GESTORIA_DOCS_PER_CLIENT
+      : plan === 'trial' || plan === 'free' ? TRIAL_DOC_LIMIT
+      : plan === 'pro' ? PRO_DOC_LIMIT : 50
+
+    // Resolve gestoria name for client orgs
+    let gestoria_name: string | null = null
+    if (orgResult.data.gestoria_id) {
+      const { data: gestoriaOrg } = await supabaseServer
+        .from('organizations')
+        .select('name')
+        .eq('id', orgResult.data.gestoria_id)
+        .single()
+      gestoria_name = gestoriaOrg?.name ?? null
+    }
 
     return NextResponse.json({
-      org: orgResult.data,
+      org: { ...orgResult.data, gestoria_name },
       user: { id: user.id, email: user.email, full_name: user.full_name, role: user.role },
       usage: {
         used: plan === 'trial' || plan === 'free'
