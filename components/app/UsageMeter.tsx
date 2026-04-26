@@ -11,6 +11,8 @@ const PLAN_LABELS: Record<OrgPlan, string> = {
   pro: 'Pro',
   gestoria: 'Gestoría',
   gestoria_pro: 'Gestoría Pro',
+  whitelabel: 'White-Label',
+  whitelabel_pro: 'White-Label Pro',
   enterprise: 'Enterprise',
 }
 

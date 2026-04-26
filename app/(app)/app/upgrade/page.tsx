@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
   Check, Zap, ShieldCheck, CreditCard, AlertCircle,
-  Loader2, ExternalLink, Building2, Users, Sparkles,
+  Loader2, ExternalLink, Building2, Users, Sparkles, Globe,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -72,6 +72,40 @@ const PLANS = [
     ],
     highlight: false,
     badge: null,
+  },
+  {
+    id: 'whitelabel',
+    name: 'White-Label',
+    price: '299 €',
+    description: 'Para gestorías grandes',
+    icon: Globe,
+    priceKey: 'STRIPE_WL_PRICE_ID',
+    features: [
+      'Hasta 100 clientes bajo tu marca',
+      'Logo, colores y nombre propios',
+      'Oculta el branding de DocuAI',
+      'Email de soporte personalizado',
+      'Footer y textos personalizados',
+    ],
+    highlight: false,
+    badge: 'Para gestorías',
+  },
+  {
+    id: 'whitelabel_pro',
+    name: 'White-Label Pro',
+    price: '599 €',
+    description: 'Marca propia + dominio',
+    icon: Globe,
+    priceKey: 'STRIPE_WL_PRO_PRICE_ID',
+    features: [
+      'Clientes ilimitados bajo tu marca',
+      'Dominio personalizado (app.migestoria.es)',
+      'Todo lo del plan White-Label',
+      'Acceso a API de gestión de dominio',
+      'Soporte dedicado',
+    ],
+    highlight: false,
+    badge: 'Para gestorías',
   },
 ]
 

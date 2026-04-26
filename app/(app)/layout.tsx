@@ -4,7 +4,7 @@ import { AppHeader } from '@/components/app/AppHeader'
 import { ImpersonationBanner } from '@/components/app/ImpersonationBanner'
 
 export const metadata: Metadata = {
-  title: { default: 'Aplicación | DocuAI', template: '%s | DocuAI' },
+  title: { default: 'Aplicación', template: '%s | DocuAI' },
   robots: { index: false, follow: false },
 }
 

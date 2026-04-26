@@ -6,6 +6,11 @@
 :root {
   --radius: 0.625rem;
 
+  /* White-label brand colors (overridden by ThemeProvider for partners) */
+  --brand:       #1D9E75;
+  --brand-light: #E1F5EE;
+  --brand-dark:  #085041;
+
   /* Background & surface */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -98,6 +103,10 @@
 }
 
 @theme inline {
+  --color-brand:       var(--brand);
+  --color-brand-light: var(--brand-light);
+  --color-brand-dark:  var(--brand-dark);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

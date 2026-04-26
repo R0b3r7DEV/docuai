@@ -1,6 +1,6 @@
 // Tipos que reflejan el schema de Supabase — actualizar tras cambios en migraciones
 
-export type OrgPlan = 'trial' | 'free' | 'pro' | 'gestoria' | 'gestoria_pro' | 'enterprise'
+export type OrgPlan = 'trial' | 'free' | 'pro' | 'gestoria' | 'gestoria_pro' | 'whitelabel' | 'whitelabel_pro' | 'enterprise'
 export type OrgType = 'empresa' | 'gestoria'
 export type SubscriptionStatus = 'trialing' | 'active' | 'past_due' | 'canceled' | 'incomplete'
 export type UserRole = 'owner' | 'admin' | 'member'
@@ -137,4 +137,27 @@ export interface GestoriaPlan {
   maxClients: number  // -1 = unlimited
   price: number
   docsPerClientPerMonth: number
+}
+
+export interface WhitelabelConfig {
+  id: string
+  organization_id: string
+  brand_name: string
+  brand_logo_url: string | null
+  brand_favicon_url: string | null
+  primary_color: string
+  primary_dark: string
+  custom_domain: string | null
+  support_email: string | null
+  hide_docuai_branding: boolean
+  custom_login_message: string | null
+  custom_footer_text: string | null
+  max_clients: number
+  created_at: string
+  updated_at: string
+}
+
+export interface WhitelabelContext {
+  config: WhitelabelConfig | null
+  isWhitelabel: boolean
 }

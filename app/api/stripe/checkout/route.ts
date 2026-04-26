@@ -11,12 +11,16 @@ const PLAN_PRICE_MAP: Record<string, string | undefined> = {
   pro: process.env.STRIPE_PRICE_ID,
   gestoria: process.env.STRIPE_GESTORIA_PRICE_ID,
   gestoria_pro: process.env.STRIPE_GESTORIA_PRO_PRICE_ID,
+  whitelabel: process.env.STRIPE_WL_PRICE_ID,
+  whitelabel_pro: process.env.STRIPE_WL_PRO_PRICE_ID,
 }
 
 const PLAN_SUCCESS_URL: Record<string, string> = {
   pro: '/app/documents?upgraded=true',
   gestoria: '/onboarding/gestoria',
   gestoria_pro: '/onboarding/gestoria',
+  whitelabel: '/app/onboarding/whitelabel',
+  whitelabel_pro: '/app/onboarding/whitelabel',
 }
 
 export async function POST(req: NextRequest) {

@@ -5,6 +5,9 @@ import Stripe from 'stripe'
 import { stripe } from '@/lib/stripe/client'
 import { supabaseServer } from '@/lib/supabase/server'
 import { GESTORIA_MAX_CLIENTS, GESTORIA_PRO_MAX_CLIENTS } from '@/lib/stripe/constants'
+
+const WL_MAX_CLIENTS = 100
+const WL_PRO_MAX_CLIENTS = -1
 import { sendEmail } from '@/lib/email/sender'
 import { buildPaymentFailedEmail } from '@/lib/email/templates'
 
@@ -52,13 +55,18 @@ export async function POST(req: NextRequest) {
           ? new Date(rawSub.current_period_end * 1000).toISOString()
           : null
 
-        // Determine gestoria settings based on plan
+        // Determine settings based on plan
         const isGestoria = plan === 'gestoria' || plan === 'gestoria_pro'
+        const isWhitelabel = plan === 'whitelabel' || plan === 'whitelabel_pro'
         const maxClients = plan === 'gestoria'
           ? GESTORIA_MAX_CLIENTS
           : plan === 'gestoria_pro'
             ? GESTORIA_PRO_MAX_CLIENTS
-            : 0
+            : plan === 'whitelabel'
+              ? WL_MAX_CLIENTS
+              : plan === 'whitelabel_pro'
+                ? WL_PRO_MAX_CLIENTS
+                : 0
 
         const updateData: Record<string, unknown> = {
           plan,
@@ -72,10 +80,36 @@ export async function POST(req: NextRequest) {
           updateData.max_clients = maxClients
         }
 
+        if (isWhitelabel) {
+          updateData.org_type = 'gestoria'
+          updateData.max_clients = maxClients
+        }
+
         await supabaseServer
           .from('organizations')
           .update(updateData)
           .eq('id', orgId)
+
+        // Bootstrap whitelabel_configs for new WL partners
+        if (isWhitelabel) {
+          const { data: existingWl } = await supabaseServer
+            .from('whitelabel_configs')
+            .select('id')
+            .eq('organization_id', orgId)
+            .maybeSingle()
+
+          if (!existingWl) {
+            const { data: org } = await supabaseServer
+              .from('organizations')
+              .select('name')
+              .eq('id', orgId)
+              .single()
+            await supabaseServer
+              .from('whitelabel_configs')
+              .insert({ organization_id: orgId, brand_name: org?.name ?? 'Mi Marca' })
+          }
+        }
+
         break
       }
 
