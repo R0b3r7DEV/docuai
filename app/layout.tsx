@@ -1,12 +1,14 @@
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
-import { Geist } from 'next/font/google'
+import { Geist, Playfair_Display, DM_Sans } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 import { ThemeProvider } from '@/lib/whitelabel/theme-context'
 import { resolveWhitelabelConfig } from '@/lib/whitelabel/resolver'
 import './globals.css'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
+const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair', display: 'swap' })
+const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans', display: 'swap' })
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers()
@@ -51,7 +53,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <ClerkProvider>
-      <html lang="es" className={`${geist.variable} h-full antialiased`}>
+      <html lang="es" className={`${geist.variable} ${playfair.variable} ${dmSans.variable} h-full antialiased`}>
         <body className="min-h-full bg-background text-foreground">
           <ThemeProvider config={wlConfig}>
             {children}
