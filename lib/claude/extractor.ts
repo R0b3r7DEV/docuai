@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { ClaudeExtractionSchema, type ClaudeExtraction } from './schemas'
 import { SYSTEM_EXTRACTION_PROMPT } from './prompts'
+import { runOCR, type OCRResult } from '@/lib/ocr'
 
 const MODEL = 'claude-sonnet-4-6'
 const MAX_RETRIES = 3
@@ -17,8 +18,14 @@ export interface ExtractorInput {
   mimeType: string
 }
 
-/** Typed extraction result returned by extractDocumentData */
-export type ClaudeExtractionPayload = ClaudeExtraction
+/** OCR metadata attached to the result when an image was processed */
+export interface ExtractionOCRMeta {
+  used: boolean
+  confidence: number
+}
+
+/** Typed extraction result — carries OCR metadata for image inputs */
+export type ClaudeExtractionPayload = ClaudeExtraction & { _ocr?: ExtractionOCRMeta }
 
 const JSON_SCHEMA_HINT = JSON.stringify({
   type: 'factura|presupuesto|nomina|contrato|albaran|extracto_bancario|balance|otro',
@@ -32,10 +39,19 @@ const JSON_SCHEMA_HINT = JSON.stringify({
   additional_fields: {},
 })
 
-function buildContent(input: ExtractorInput): Anthropic.MessageParam['content'] {
+function buildContent(
+  input: ExtractorInput,
+  ocrHint?: string
+): Anthropic.MessageParam['content'] {
   const content: Anthropic.MessageParam['content'] = []
 
-  if (input.rawText) {
+  if (ocrHint) {
+    // OCR text replaces the image block — cheaper and more reliable
+    content.push({
+      type: 'text',
+      text: `Documento:\n\n${ocrHint}`,
+    })
+  } else if (input.rawText) {
     // text/plain or PDF parsed via pdf-parse
     content.push({
       type: 'text',
@@ -52,7 +68,7 @@ function buildContent(input: ExtractorInput): Anthropic.MessageParam['content'] 
       },
     } as Anthropic.DocumentBlockParam)
   } else if (input.base64Image) {
-    // Image file sent as image block
+    // Image file sent as image block (OCR fallback or non-image path)
     content.push({
       type: 'image',
       source: {
@@ -71,12 +87,15 @@ function buildContent(input: ExtractorInput): Anthropic.MessageParam['content'] 
   return content
 }
 
-async function callClaude(input: ExtractorInput): Promise<ClaudeExtractionPayload> {
+async function callClaude(
+  input: ExtractorInput,
+  ocrHint?: string
+): Promise<ClaudeExtractionPayload> {
   const response = await client.messages.create({
     model: MODEL,
     max_tokens: 1024,
     system: SYSTEM_EXTRACTION_PROMPT,
-    messages: [{ role: 'user', content: buildContent(input) }],
+    messages: [{ role: 'user', content: buildContent(input, ocrHint) }],
   })
 
   const text = response.content.find((b) => b.type === 'text')?.text ?? ''
@@ -88,15 +107,33 @@ async function callClaude(input: ExtractorInput): Promise<ClaudeExtractionPayloa
 
 /**
  * Extract structured data from a document using Claude.
+ * For image inputs, runs OCR first — if confidence is sufficient the text is sent
+ * to Claude instead of the image (cheaper and more reliable).
  * Retries up to MAX_RETRIES times with exponential backoff on rate limit errors only.
- * Never throws without exhausting retries.
  */
 export async function extractDocumentData(input: ExtractorInput): Promise<ClaudeExtractionPayload> {
+  // OCR pre-processing for image inputs
+  let ocr: OCRResult | undefined
+  let ocrHint: string | undefined
+
+  if (input.base64Image && input.mimeType.startsWith('image/')) {
+    const buffer = Buffer.from(input.base64Image, 'base64')
+    ocr = await runOCR(buffer, input.mimeType)
+    if (ocr.used) {
+      ocrHint = `[Texto extraído por OCR — confianza: ${ocr.confidence.toFixed(1)}%. Puede contener errores menores.]\n\n${ocr.text}`
+    }
+  }
+
   let lastError: Error | undefined
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
-      return await callClaude(input)
+      const result = await callClaude(input, ocrHint)
+      // Attach OCR metadata so the caller (Inngest step) can persist it
+      if (ocr) {
+        result._ocr = { used: ocr.used, confidence: ocr.confidence }
+      }
+      return result
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err))
       const isRateLimit =

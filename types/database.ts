@@ -82,6 +82,8 @@ export interface DocumentExtraction {
   category: ExtractionCategory
   raw_json: Record<string, unknown>
   confidence_score: number | null
+  ocr_used: boolean
+  ocr_confidence: number | null
   created_at: string
   updated_at: string
 }

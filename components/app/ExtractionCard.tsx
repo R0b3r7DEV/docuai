@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, AlertCircle, ArrowLeft, ExternalLink, FileText, Sparkles } from 'lucide-react'
+import { Loader2, AlertCircle, ArrowLeft, ExternalLink, FileText, Sparkles, ScanText } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -43,6 +43,17 @@ function ConfidenceBadge({ score }: { score: number }) {
   return (
     <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium gap-1', variant)}>
       <Sparkles className="h-3 w-3" /> Confianza {pct}%
+    </span>
+  )
+}
+
+function OcrBadge({ confidence }: { confidence: number }) {
+  const variant = confidence >= 80
+    ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+    : 'bg-amber-100 text-amber-700 border-amber-200'
+  return (
+    <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium gap-1', variant)}>
+      <ScanText className="h-3 w-3" /> Procesado con OCR · Confianza: {Math.round(confidence)}%
     </span>
   )
 }
@@ -179,7 +190,12 @@ export function ExtractionCard({ documentId }: { documentId: string }) {
           </div>
           <h2 className="text-xl font-semibold break-all">{doc.filename}</h2>
         </div>
-        {ext?.confidence_score != null && <ConfidenceBadge score={ext.confidence_score} />}
+        <div className="flex flex-wrap items-center gap-2">
+          {ext?.ocr_used && ext.ocr_confidence != null && (
+            <OcrBadge confidence={ext.ocr_confidence} />
+          )}
+          {ext?.confidence_score != null && <ConfidenceBadge score={ext.confidence_score} />}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
