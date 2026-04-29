@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, AlertCircle, ArrowLeft, ExternalLink, FileText, Sparkles, ScanText } from 'lucide-react'
+import { Loader2, AlertCircle, ArrowLeft, ExternalLink, FileText, Sparkles, ScanText, RefreshCw } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -70,6 +70,21 @@ export function ExtractionCard({ documentId }: { documentId: string }) {
   const [loading, setLoading] = useState(true)
   const [fetchError, setFetchError] = useState<string | null>(null)
   const [pollingActive, setPollingActive] = useState(false)
+  const [retrying, setRetrying] = useState(false)
+
+  const handleRetry = useCallback(async () => {
+    setRetrying(true)
+    try {
+      const res = await fetch(`/api/documents/${documentId}/retry`, { method: 'POST' })
+      if (!res.ok) throw new Error('Error al reintentar')
+      // Optimistically flip to processing so the polling UI kicks in
+      setData(prev => prev ? { ...prev, document: { ...prev.document, status: 'pending', error_message: null } } : prev)
+    } catch {
+      // keep error state visible
+    } finally {
+      setRetrying(false)
+    }
+  }, [documentId])
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null
@@ -158,14 +173,31 @@ export function ExtractionCard({ documentId }: { documentId: string }) {
           <ArrowLeft className="h-4 w-4 mr-1.5" /> Documentos
         </Button>
         <Card className="border-destructive/50">
-          <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
+          <CardContent className="flex flex-col items-center gap-5 py-12 text-center">
             <div className="w-14 h-14 rounded-2xl bg-destructive/10 flex items-center justify-center">
               <AlertCircle className="h-7 w-7 text-destructive" />
             </div>
             <div>
               <p className="font-semibold">{doc.filename}</p>
-              <p className="text-sm text-destructive mt-1.5">{doc.error_message ?? 'Error desconocido al procesar'}</p>
+              <p className="text-sm text-muted-foreground mt-1">No se pudieron extraer los datos del documento.</p>
+              {doc.error_message && (
+                <p className="text-xs text-destructive/70 mt-2 font-mono bg-destructive/5 rounded px-3 py-1.5 max-w-sm mx-auto break-all">
+                  {doc.error_message}
+                </p>
+              )}
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRetry}
+              disabled={retrying}
+              className="gap-2"
+            >
+              {retrying
+                ? <><Loader2 className="h-3.5 w-3.5 animate-spin" />Reintentando…</>
+                : <><RefreshCw className="h-3.5 w-3.5" />Reintentar</>
+              }
+            </Button>
           </CardContent>
         </Card>
       </div>

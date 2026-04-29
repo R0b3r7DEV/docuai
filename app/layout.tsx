@@ -4,6 +4,7 @@ import { Geist, Playfair_Display, DM_Sans, DM_Mono } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 import { ThemeProvider } from '@/lib/whitelabel/theme-context'
 import { resolveWhitelabelConfig } from '@/lib/whitelabel/resolver'
+import { CookieBanner } from '@/components/CookieBanner'
 import './globals.css'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
@@ -58,6 +59,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <body className="min-h-full bg-background text-foreground">
           <ThemeProvider config={wlConfig}>
             {children}
+            <CookieBanner />
           </ThemeProvider>
         </body>
       </html>

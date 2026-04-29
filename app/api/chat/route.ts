@@ -10,6 +10,9 @@ import { ChatRequestSchema } from '@/lib/utils/validators'
 import { handleApiError } from '@/lib/utils/errors'
 import { getAuthenticatedUser } from '@/lib/utils/auth'
 import { MAX_CHAT_CONTEXT_DOCS, MAX_CHAT_HISTORY_TURNS } from '@/types/app'
+import { checkRateLimit } from '@/lib/utils/rateLimit'
+
+const MAX_CONTEXT_CHARS = 30_000
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -17,6 +20,14 @@ export async function POST(req: NextRequest) {
   try {
     await auth.protect()
     const user = await getAuthenticatedUser()
+
+    if (!checkRateLimit(`${user.id}:chat`, 20, 60_000)) {
+      return new Response(
+        JSON.stringify({ error: 'rate_limit', message: 'Demasiadas peticiones. Máximo 20 mensajes por minuto.' }),
+        { status: 429, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
     const body = ChatRequestSchema.parse(await req.json())
 
     // Last 60 done documents with extraction
@@ -28,7 +39,8 @@ export async function POST(req: NextRequest) {
       .order('created_at', { ascending: false })
       .limit(MAX_CHAT_CONTEXT_DOCS)
 
-    const documentsContext = JSON.stringify(docs ?? [], null, 2)
+    const raw = JSON.stringify(docs ?? [], null, 2)
+    const documentsContext = raw.length > MAX_CONTEXT_CHARS ? raw.slice(0, MAX_CONTEXT_CHARS) + '\n... [contexto truncado]' : raw
     const hasDocuments = (docs ?? []).length > 0
 
     // Last 20 history turns (oldest first)

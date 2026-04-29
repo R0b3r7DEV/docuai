@@ -1,22 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+const mockCreate = vi.hoisted(() => vi.fn())
+
 vi.mock('@anthropic-ai/sdk', () => ({
-  default: vi.fn().mockImplementation(() => ({
-    messages: {
-      create: vi.fn(),
-      stream: vi.fn(),
-    },
-  })),
+  default: class MockAnthropic {
+    messages = { create: mockCreate }
+  },
 }))
 
 describe('extractDocument', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    mockCreate.mockReset()
   })
 
   it('extrae campos de una factura en texto plano', async () => {
-    const { default: Anthropic } = await import('@anthropic-ai/sdk')
-    const mockCreate = vi.fn().mockResolvedValue({
+    mockCreate.mockResolvedValue({
       content: [
         {
           type: 'text',
@@ -33,9 +31,6 @@ describe('extractDocument', () => {
         },
       ],
     })
-    ;(Anthropic as unknown as ReturnType<typeof vi.fn>).mockImplementation(() => ({
-      messages: { create: mockCreate },
-    }))
 
     const { extractDocument } = await import('@/lib/claude/extractor')
     const result = await extractDocument({
@@ -50,14 +45,9 @@ describe('extractDocument', () => {
   })
 
   it('lanza error si Claude no devuelve JSON válido', async () => {
-    const { default: Anthropic } = await import('@anthropic-ai/sdk')
-    ;(Anthropic as unknown as ReturnType<typeof vi.fn>).mockImplementation(() => ({
-      messages: {
-        create: vi.fn().mockResolvedValue({
-          content: [{ type: 'text', text: 'No tengo información suficiente.' }],
-        }),
-      },
-    }))
+    mockCreate.mockResolvedValue({
+      content: [{ type: 'text', text: 'No tengo información suficiente.' }],
+    })
 
     const { extractDocument } = await import('@/lib/claude/extractor')
     await expect(

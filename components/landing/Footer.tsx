@@ -22,9 +22,9 @@ const columns = [
   {
     title: 'Legal',
     links: [
-      { label: 'Política de privacidad', href: '#' },
-      { label: 'Términos de servicio', href: '#' },
-      { label: 'Cookies', href: '#' },
+      { label: 'Política de privacidad', href: '/privacy' },
+      { label: 'Términos de servicio', href: '/terms' },
+      { label: 'Contacto', href: 'mailto:info@lexia.es' },
     ],
   },
 ]

@@ -12,12 +12,10 @@ import { getAuthenticatedUser } from '@/lib/utils/auth'
 import { checkDocumentLimit, incrementTrialDocs } from '@/lib/stripe/limits'
 import { sendEmail } from '@/lib/email/sender'
 import { buildLimitReachedEmail } from '@/lib/email/templates'
+import { checkRateLimit } from '@/lib/utils/rateLimit'
 
 // In-memory dedup: orgId → last limit-email timestamp (resets on cold start)
 const limitEmailSentAt: Record<string, number> = {}
-
-const UPLOAD_RATE_LIMIT = 20
-const RATE_WINDOW_MS = 60 * 60 * 1000
 
 function detectMimeFromBytes(buffer: Buffer): string | null {
   if (buffer.length < 4) return null
@@ -58,18 +56,11 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // ── Rate limit anti-abuse ───────────────────────────────────────────
-    const windowStart = new Date(Date.now() - RATE_WINDOW_MS).toISOString()
-    const { count } = await supabaseServer
-      .from('documents')
-      .select('*', { count: 'exact', head: true })
-      .eq('organization_id', user.organization_id)
-      .gte('created_at', windowStart)
-
-    if ((count ?? 0) >= UPLOAD_RATE_LIMIT) {
+    // ── Rate limit anti-abuse: 10 subidas/min por usuario ──────────────
+    if (!checkRateLimit(`${user.id}:upload`, 10, 60_000)) {
       return NextResponse.json(
-        { error: 'límite_alcanzado', message: 'Límite de subidas alcanzado (20/hora). Inténtalo más tarde.', upgrade_url: '/app/upgrade' },
-        { status: 403 }
+        { error: 'rate_limit', message: 'Demasiadas subidas. Máximo 10 por minuto.', upgrade_url: '/app/upgrade' },
+        { status: 429 }
       )
     }
 

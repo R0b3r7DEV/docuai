@@ -11,6 +11,7 @@ import { StatsOverview } from '@/components/app/StatsOverview'
 import { DocsByTypeChart } from '@/components/app/charts/DocsByTypeChart'
 import { SpendingByMonthChart } from '@/components/app/charts/SpendingByMonthChart'
 import { TopVendorsChart } from '@/components/app/charts/TopVendorsChart'
+import { OnboardingChecklist } from '@/components/app/OnboardingChecklist'
 import { Skeleton } from '@/components/ui/skeleton'
 
 interface StatsData {
@@ -64,15 +65,42 @@ export default function DashboardPage() {
         </Button>
       </div>
 
-      {loading ? (
+      {!loading && stats?.totalDocs === 0 && (
+        <div className="flex flex-col items-center justify-center py-16 gap-5 text-center rounded-xl border border-dashed border-border">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <FileText className="h-7 w-7 text-primary" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-lg">Tu espacio de trabajo está listo</h2>
+            <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
+              Sube tu primera factura, contrato o nómina y Lexia extraerá los datos automáticamente.
+            </p>
+          </div>
+          <Button asChild>
+            <Link href="/app/documents">
+              <FileText className="mr-2 h-4 w-4" />
+              Subir primer documento
+            </Link>
+          </Button>
+        </div>
+      )}
+
+      {!loading && stats && stats.totalDocs > 0 && <StatsOverview stats={stats} />}
+
+      {loading && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-24 rounded-xl" />
           ))}
         </div>
-      ) : stats ? (
-        <StatsOverview stats={stats} />
-      ) : null}
+      )}
+
+      {!loading && stats && (
+        <OnboardingChecklist
+          totalDocs={stats.totalDocs}
+          hasDoneDocs={(stats.docsByType ?? []).length > 0}
+        />
+      )}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>

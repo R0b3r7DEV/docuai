@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Check, Sparkles, Building2 } from 'lucide-react'
+import { PLAN_PRICES } from '@/lib/stripe/constants'
 
 const plans = [
   {
@@ -21,8 +22,8 @@ const plans = [
   {
     name: 'Pro',
     Icon: Sparkles,
-    priceMonthly: 10,
-    priceAnnual: 8,
+    priceMonthly: PLAN_PRICES.pro,
+    priceAnnual: Math.round(PLAN_PRICES.pro * 0.8),
     description: 'Para pymes y autónomos',
     features: ['20 documentos al mes', 'Todos los tipos de documento', 'Chat IA ilimitado', 'Exportación Excel', 'Soporte por email'],
     cta: 'Suscribirse',
@@ -33,8 +34,8 @@ const plans = [
   {
     name: 'Gestoría',
     Icon: Building2,
-    priceMonthly: 49,
-    priceAnnual: 39,
+    priceMonthly: PLAN_PRICES.gestoria,
+    priceAnnual: Math.round(PLAN_PRICES.gestoria * 0.8),
     description: 'Para gestorías y contables',
     features: ['Hasta 10 empresas clientes', 'Panel multi-empresa', '200 docs/mes por cliente', 'Invitaciones a clientes', 'Soporte prioritario'],
     cta: 'Empezar',

@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { cn } from '@/lib/utils/cn'
 import type { OrgPlan, SubscriptionStatus } from '@/types/database'
+import { PLAN_PRICES } from '@/lib/stripe/constants'
 
 interface SubscriptionInfo {
   plan: OrgPlan
@@ -23,7 +24,7 @@ const PLANS = [
   {
     id: 'pro',
     name: 'Plan Pro',
-    price: '10 €',
+    price: `${PLAN_PRICES.pro} €`,
     description: 'Para empresas individuales',
     icon: Zap,
     priceKey: 'STRIPE_PRICE_ID',
@@ -40,7 +41,7 @@ const PLANS = [
   {
     id: 'gestoria',
     name: 'Plan Gestoría',
-    price: '99 €',
+    price: `${PLAN_PRICES.gestoria} €`,
     description: 'Para gestorías y asesorías',
     icon: Building2,
     priceKey: 'STRIPE_GESTORIA_PRICE_ID',
@@ -59,7 +60,7 @@ const PLANS = [
   {
     id: 'gestoria_pro',
     name: 'Plan Gestoría Pro',
-    price: '199 €',
+    price: `${PLAN_PRICES.gestoria_pro} €`,
     description: 'Para grandes gestorías',
     icon: Users,
     priceKey: 'STRIPE_GESTORIA_PRO_PRICE_ID',
@@ -76,7 +77,7 @@ const PLANS = [
   {
     id: 'whitelabel',
     name: 'White-Label',
-    price: '299 €',
+    price: `${PLAN_PRICES.whitelabel} €`,
     description: 'Para gestorías grandes',
     icon: Globe,
     priceKey: 'STRIPE_WL_PRICE_ID',
@@ -93,7 +94,7 @@ const PLANS = [
   {
     id: 'whitelabel_pro',
     name: 'White-Label Pro',
-    price: '599 €',
+    price: `${PLAN_PRICES.whitelabel_pro} €`,
     description: 'Marca propia + dominio',
     icon: Globe,
     priceKey: 'STRIPE_WL_PRO_PRICE_ID',
