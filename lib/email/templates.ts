@@ -21,7 +21,7 @@ function header(title: string): string {
       <div style="width:30px;height:30px;background:rgba(255,255,255,.2);border-radius:8px;display:inline-flex;align-items:center;justify-content:center">
         <span style="color:#fff;font-size:15px">📄</span>
       </div>
-      <span style="color:#fff;font-size:18px;font-weight:700;letter-spacing:-.3px">DocuAI</span>
+      <span style="color:#fff;font-size:18px;font-weight:700;letter-spacing:-.3px">Lexia</span>
     </div>
   `
 }
@@ -30,7 +30,7 @@ function footer(orgName?: string): string {
   return `
     <div style="padding:20px 40px;border-top:1px solid #f1f5f9;background:#f8fafc;text-align:center">
       <p style="margin:0;color:#94a3b8;font-size:12px">
-        © ${new Date().getFullYear()} DocuAI${orgName ? ` · ${orgName}` : ''} — Impulsado por Claude AI
+        © ${new Date().getFullYear()} Lexia${orgName ? ` · ${orgName}` : ''} — Impulsado por Claude AI
       </p>
     </div>
   `
@@ -65,10 +65,10 @@ function wrap(body: string): string {
 export function buildWelcomeEmail(fullName: string | null): { subject: string; html: string } {
   const greeting = fullName ? `Hola, ${fullName.split(' ')[0]}` : 'Hola'
   const html = wrap(`
-    ${header('Bienvenido a DocuAI')}
+    ${header('Bienvenido a Lexia')}
     <div style="${BODY_PAD}">
       <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${DARK}">
-        ${greeting} — Bienvenido a DocuAI
+        ${greeting} — Bienvenido a Lexia
       </h1>
       <p style="margin:0 0 24px;color:${MUTED};font-size:15px;line-height:1.6">
         Tu cuenta ya está lista. Tienes <strong style="color:${DARK}">2 documentos gratuitos</strong>
@@ -94,7 +94,7 @@ export function buildWelcomeEmail(fullName: string | null): { subject: string; h
     </div>
     ${footer()}
   `)
-  return { subject: 'Bienvenido a DocuAI — Tu primer documento gratis', html }
+  return { subject: 'Bienvenido a Lexia — Tu primer documento gratis', html }
 }
 
 // ─── Document processed email ───────────────────────────────────────────────
@@ -182,7 +182,7 @@ export function buildLimitReachedEmail(opts: {
     </div>
     ${footer()}
   `)
-  return { subject: 'Has llegado al límite de tu plan en DocuAI', html }
+  return { subject: 'Has llegado al límite de tu plan en Lexia', html }
 }
 
 // ─── Monthly summary email ──────────────────────────────────────────────────
@@ -238,7 +238,7 @@ export function buildMonthlySummaryEmail(opts: {
     </div>
     ${footer(orgName)}
   `)
-  return { subject: `Tu resumen de ${monthName} en DocuAI`, html }
+  return { subject: `Tu resumen de ${monthName} en Lexia`, html }
 }
 
 // ─── Payment failed email ───────────────────────────────────────────────────
@@ -251,7 +251,7 @@ export function buildPaymentFailedEmail(): { subject: string; html: string } {
       </div>
       <h1 style="margin:0 0 8px;font-size:20px;font-weight:700;color:${DARK}">Problema con tu pago</h1>
       <p style="margin:0 0 20px;color:${MUTED};font-size:15px;line-height:1.6">
-        No hemos podido procesar el pago de tu suscripción DocuAI.
+        No hemos podido procesar el pago de tu suscripción Lexia.
         Para mantener el acceso, actualiza tu método de pago lo antes posible.
       </p>
       <p style="margin:0 0 28px;color:${MUTED};font-size:14px;line-height:1.6">
@@ -265,5 +265,5 @@ export function buildPaymentFailedEmail(): { subject: string; html: string } {
     </div>
     ${footer()}
   `)
-  return { subject: '⚠️ Problema con tu pago en DocuAI', html }
+  return { subject: '⚠️ Problema con tu pago en Lexia', html }
 }

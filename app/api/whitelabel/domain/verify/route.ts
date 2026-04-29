@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { handleApiError, ValidationError } from '@/lib/utils/errors'
 
-const BLOCKED_DOMAINS = ['docuai', 'vercel', 'clerk', 'supabase', 'anthropic', 'stripe']
+const BLOCKED_DOMAINS = ['lexia', 'docuai', 'vercel', 'clerk', 'supabase', 'anthropic', 'stripe']
 
 export async function POST(req: NextRequest) {
   try {

@@ -16,7 +16,7 @@ interface ThemeContextValue {
 }
 
 const defaults: ThemeContextValue = {
-  brandName: 'DocuAI',
+  brandName: 'Lexia',
   primaryColor: '#1D9E75',
   primaryDark: '#085041',
   logoUrl: null,
@@ -44,7 +44,7 @@ export function ThemeProvider({
         logoUrl: config.brand_logo_url,
         faviconUrl: config.brand_favicon_url,
         isWhitelabel: true,
-        hideDocuaiBranding: config.hide_docuai_branding,
+        hideDocuaiBranding: config.hide_brand,
         supportEmail: config.support_email,
         footerText: config.custom_footer_text,
       }

@@ -17,7 +17,9 @@ export function Logo() {
           <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center shrink-0">
             <FileText className="h-4 w-4 text-primary-foreground" />
           </div>
-          <span className="font-bold text-base tracking-tight">{brandName}</span>
+          <span className="text-base tracking-tight">
+            <span style={{ fontWeight: 500 }}>Lex</span><span style={{ fontWeight: 300 }}>ia</span>
+          </span>
         </>
       )}
     </Link>

@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
       .then(undefined, (e) => console.error('[export] error logging export:', e))
 
     const date = new Date().toISOString().slice(0, 10).replace(/-/g, '')
-    const filename = `docuai_export_${date}.xlsx`
+    const filename = `lexia_export_${date}.xlsx`
 
     return new NextResponse(new Uint8Array(xlsx), {
       headers: {

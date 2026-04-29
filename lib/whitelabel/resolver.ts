@@ -1,9 +1,9 @@
 import { supabaseServer } from '@/lib/supabase/server'
 import type { WhitelabelConfig } from '@/types/database'
 
-const DOCUAI_HOSTS = new Set([
-  'docuai.es',
-  'docuai.app',
+const BRAND_HOSTS = new Set([
+  'lexia.es',
+  'lexia.app',
   'docuai-one.vercel.app',
   'localhost',
   '127.0.0.1',
@@ -22,7 +22,7 @@ export async function resolveWhitelabelConfig(
 ): Promise<WhitelabelConfig | null> {
   const host = stripPort(hostname)
 
-  if (DOCUAI_HOSTS.has(host) || host.endsWith('.vercel.app')) return null
+  if (BRAND_HOSTS.has(host) || host.endsWith('.vercel.app')) return null
 
   const cached = cache.get(host)
   if (cached && cached.expiresAt > Date.now()) return cached.config

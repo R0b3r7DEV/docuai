@@ -149,7 +149,7 @@ export interface WhitelabelConfig {
   primary_dark: string
   custom_domain: string | null
   support_email: string | null
-  hide_docuai_branding: boolean
+  hide_brand: boolean
   custom_login_message: string | null
   custom_footer_text: string | null
   max_clients: number

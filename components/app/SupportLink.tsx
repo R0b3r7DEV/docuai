@@ -8,9 +8,9 @@ export function SupportLink() {
 
   const href = supportEmail
     ? `mailto:${supportEmail}`
-    : 'mailto:hola@docuai.es'
+    : 'mailto:hola@lexia.es'
 
-  const label = isWhitelabel && supportEmail ? 'Contactar soporte' : 'Soporte DocuAI'
+  const label = isWhitelabel && supportEmail ? 'Contactar soporte' : 'Soporte Lexia'
 
   return (
     <a

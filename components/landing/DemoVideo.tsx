@@ -22,7 +22,7 @@ export function DemoVideo() {
             Míralo en acción
           </h2>
           <p className="text-white/50 max-w-lg mx-auto" style={{ fontFamily: 'var(--font-dm-sans)' }}>
-            En menos de 30 segundos verás cómo DocuAI extrae los datos de una factura real.
+            En menos de 30 segundos verás cómo Lexia extrae los datos de una factura real.
           </p>
         </motion.div>
 
@@ -49,7 +49,7 @@ export function DemoVideo() {
                   className="rounded-md px-10 py-1 text-xs"
                   style={{ background: '#0D0D0D', color: 'rgba(255,255,255,0.25)' }}
                 >
-                  app.docuai.es/app/documents
+                  app.lexia.es/app/documents
                 </div>
               </div>
             </div>
@@ -131,7 +131,7 @@ export function DemoVideo() {
               <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 z-50 backdrop-blur-md" style={{ background: 'rgba(0,0,0,0.85)' }} />
                 <Dialog.Content className="fixed inset-0 z-50 flex items-center justify-center p-6">
-                  <Dialog.Title className="sr-only">Demo de DocuAI</Dialog.Title>
+                  <Dialog.Title className="sr-only">Demo de Lexia</Dialog.Title>
                   <div className="relative w-full max-w-4xl">
                     <Dialog.Close className="absolute -top-10 right-0 flex items-center gap-1.5 text-sm text-white/55 hover:text-white transition-colors">
                       <X className="h-4 w-4" />

@@ -7,7 +7,7 @@ function getResend(): Resend | null {
   return _resend
 }
 
-const DEFAULT_FROM = 'DocuAI <hola@docuai.es>'
+const DEFAULT_FROM = 'Lexia <hola@lexia.es>'
 
 interface SendOptions {
   to: string | string[]

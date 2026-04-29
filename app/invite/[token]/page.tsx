@@ -33,7 +33,7 @@ export default async function InvitePage({ params }: Props) {
         <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
           <FileText className="h-5 w-5 text-primary-foreground" />
         </div>
-        <span className="text-xl font-bold tracking-tight">DocuAI</span>
+        <span className="text-xl font-bold tracking-tight">Lexia</span>
       </div>
 
       {expired ? (
@@ -59,7 +59,7 @@ export default async function InvitePage({ params }: Props) {
       ) : (
         <div className="w-full max-w-md flex flex-col gap-6">
           <div className="text-center">
-            <h1 className="text-2xl font-bold">{gestoriaName} te invita a DocuAI</h1>
+            <h1 className="text-2xl font-bold">{gestoriaName} te invita a Lexia</h1>
             <p className="text-muted-foreground mt-2 text-sm">
               Crea tu cuenta para acceder al panel de <strong>{invitation.company_name}</strong>.
               Tu gestoría gestiona la suscripción — no pagas nada.

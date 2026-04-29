@@ -1,8 +1,10 @@
-# DocuAI — Inteligencia Documental para Empresas
+# Lexia — Gestión documental con IA
 
 > Sube una factura. En 10 segundos tienes todos los datos extraídos, clasificados y listos para analizar.
 
-DocuAI es una plataforma web SaaS (Software como Servicio) que usa **Inteligencia Artificial** para automatizar la gestión documental de empresas españolas. Está orientada a pymes, autónomos y gestorías que todavía procesan facturas y contratos de forma manual.
+**Lexia** es una plataforma web SaaS (Software como Servicio) que usa **Inteligencia Artificial** para automatizar la gestión documental de empresas españolas. Está orientada a pymes, autónomos y gestorías que todavía procesan facturas y contratos de forma manual.
+
+URL de producción: [https://lexia.es](https://lexia.es) *(placeholder — gestionar desde Vercel Dashboard)*
 
 ---
 
@@ -10,11 +12,11 @@ DocuAI es una plataforma web SaaS (Software como Servicio) que usa **Inteligenci
 
 Hoy en día, una pyme española recibe decenas de facturas al mes en formato PDF o papel escaneado. Alguien tiene que abrirlas una a una, apuntar el proveedor, el importe, la fecha y el IVA en una hoja de Excel. Es tedioso, propenso a errores y consume horas de trabajo.
 
-**DocuAI elimina ese proceso.** Subes el documento y la IA hace el resto.
+**Lexia elimina ese proceso.** Subes el documento y la IA hace el resto.
 
 ---
 
-## ¿Qué puede hacer DocuAI?
+## ¿Qué puede hacer Lexia?
 
 | Función | Descripción |
 |---------|-------------|
@@ -115,7 +117,7 @@ USUARIO
 ## Estructura de carpetas
 
 ```
-docuai/
+lexia/
 │
 ├── app/                          # Páginas y rutas de la aplicación
 │   ├── page.tsx                  # Landing page pública
@@ -289,7 +291,7 @@ STRIPE_GESTORIA_PRO_PRICE_ID= # Plan Gestoría Pro
 STRIPE_WL_PRICE_ID=           # Plan White-Label
 STRIPE_WL_PRO_PRICE_ID=       # Plan White-Label Pro
 
-# Email (Resend)
+# Email (Resend) — desde hola@lexia.es
 RESEND_API_KEY=
 
 # Jobs en segundo plano (Inngest)
@@ -297,7 +299,7 @@ INNGEST_EVENT_KEY=
 INNGEST_SIGNING_KEY=
 
 # URL de la app
-NEXT_PUBLIC_APP_URL=https://tu-dominio.com
+NEXT_PUBLIC_APP_URL=https://lexia.es
 
 # OCR (opcional, por defecto español + inglés)
 TESSERACT_LANG=spa+eng
@@ -361,19 +363,17 @@ pnpm test:ui        # Interfaz visual de tests
 pnpm test:coverage  # Informe de cobertura de código
 ```
 
-Los tests están en la carpeta `tests/` y validan los componentes principales de la interfaz.
-
 ---
 
-## Lo que hace a DocuAI diferente
+## Lo que hace a Lexia diferente
 
-- **OCR propio**: a diferencia de soluciones que sólo aceptan PDFs legibles, DocuAI preprocesa imágenes con Sharp (escala de grises, normalización, contraste) antes del OCR, logrando extraer texto incluso de facturas escaneadas de mala calidad.
+- **OCR propio**: a diferencia de soluciones que sólo aceptan PDFs legibles, Lexia preprocesa imágenes con Sharp (escala de grises, normalización, contraste) antes del OCR, logrando extraer texto incluso de facturas escaneadas de mala calidad.
 
 - **IA conversacional sobre tus documentos**: no es sólo extracción. El chat conecta directamente con tus documentos almacenados y responde preguntas complejas con contexto real.
 
 - **Multi-tenant seguro**: cada organización tiene sus datos completamente aislados mediante Row Level Security de Supabase. Una empresa nunca puede ver los datos de otra.
 
-- **White-label nativo**: las gestorías pueden ofrecer toda la plataforma bajo su propia marca, colores y dominio personalizado, sin que sus clientes sepan que usan DocuAI.
+- **White-label nativo**: las gestorías pueden ofrecer toda la plataforma bajo su propia marca, colores y dominio personalizado, sin que sus clientes sepan que usan Lexia.
 
 - **Jobs asíncronos**: el procesamiento OCR + IA se ejecuta en segundo plano con Inngest, por lo que la interfaz nunca se bloquea aunque el documento tarde en procesarse.
 

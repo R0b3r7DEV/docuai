@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
       await incrementTrialDocs(user.organization_id, limitResult.used)
     }
 
-    await inngest.send({ name: 'docuai/document.uploaded', data: { documentId: document.id } })
+    await inngest.send({ name: 'lexia/document.uploaded', data: { documentId: document.id } })
 
     return NextResponse.json(
       { documentId: document.id, filename: document.filename, status: document.status },

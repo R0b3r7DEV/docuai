@@ -32,7 +32,7 @@ export function Navbar() {
           <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#1D9E75' }}>
             <FileText className="h-4 w-4 text-white" />
           </div>
-          <span className="font-bold text-lg text-white tracking-tight">DocuAI</span>
+          <span className="font-bold text-lg text-white tracking-tight">Lexia</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-7">

@@ -38,7 +38,7 @@ export function ExportButton({ filters, disabled }: Props) {
       const url = URL.createObjectURL(blob)
       const date = new Date().toISOString().slice(0, 10).replace(/-/g, '')
       const a = document.createElement('a')
-      a.href = url; a.download = `docuai_export_${date}.xlsx`; a.click()
+      a.href = url; a.download = `lexia_export_${date}.xlsx`; a.click()
       URL.revokeObjectURL(url)
       showToast('success', 'Exportación descargada correctamente')
     } catch (err) {

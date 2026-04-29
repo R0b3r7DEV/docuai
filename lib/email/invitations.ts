@@ -10,7 +10,7 @@ function getResend(): Resend {
 }
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://docuai-one.vercel.app'
-const FROM_EMAIL = 'DocuAI <noreply@docuai-one.vercel.app>'
+const FROM_EMAIL = 'Lexia <hola@lexia.es>'
 
 export async function sendInvitationEmail(
   to: string,
@@ -34,7 +34,7 @@ export async function sendInvitationEmail(
               <div style="width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:8px;display:inline-block;text-align:center;line-height:32px">
                 <span style="color:#fff;font-size:16px">📄</span>
               </div>
-              <span style="color:#fff;font-size:20px;font-weight:700;letter-spacing:-0.5px">DocuAI</span>
+              <span style="color:#fff;font-size:20px;font-weight:700;letter-spacing:-0.5px">Lexia</span>
             </div>
           </td>
         </tr>
@@ -42,14 +42,14 @@ export async function sendInvitationEmail(
         <tr>
           <td style="padding:40px">
             <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#0f172a;letter-spacing:-0.5px">
-              ${gestoriaName} te invita a DocuAI
+              ${gestoriaName} te invita a Lexia
             </h1>
             <p style="margin:0 0 24px;color:#64748b;font-size:15px;line-height:1.6">
-              Tu gestoría <strong style="color:#0f172a">${gestoriaName}</strong> ha creado un espacio en DocuAI
+              Tu gestoría <strong style="color:#0f172a">${gestoriaName}</strong> ha creado un espacio en Lexia
               para <strong style="color:#0f172a">${companyName}</strong>.
             </p>
             <p style="margin:0 0 24px;color:#64748b;font-size:15px;line-height:1.6">
-              DocuAI extrae automáticamente los datos de tus facturas, contratos y nóminas —
+              Lexia extrae automáticamente los datos de tus facturas, contratos y nóminas —
               y responde cualquier pregunta sobre tus documentos usando inteligencia artificial.
             </p>
             <p style="margin:0 0 32px;color:#64748b;font-size:15px;line-height:1.6">
@@ -74,7 +74,7 @@ export async function sendInvitationEmail(
         <tr>
           <td style="padding:20px 40px;border-top:1px solid #f1f5f9;background:#f8fafc">
             <p style="margin:0;color:#94a3b8;font-size:12px;text-align:center">
-              © ${new Date().getFullYear()} DocuAI — Impulsado por Claude AI
+              © ${new Date().getFullYear()} Lexia — Impulsado por Claude AI
             </p>
           </td>
         </tr>
@@ -87,7 +87,7 @@ export async function sendInvitationEmail(
   await getResend().emails.send({
     from: FROM_EMAIL,
     to,
-    subject: `${gestoriaName} te invita a DocuAI`,
+    subject: `${gestoriaName} te invita a Lexia`,
     html,
   })
 }

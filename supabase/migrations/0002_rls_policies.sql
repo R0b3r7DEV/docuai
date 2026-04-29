@@ -1,4 +1,4 @@
--- DocuAI — Row Level Security
+-- Lexia — Row Level Security
 -- Requiere que el JWT de Clerk se configure como auth provider en Supabase
 
 -- ============================================================

@@ -84,7 +84,7 @@ export function Hero() {
           className="text-xl text-white/55 max-w-2xl mx-auto mb-10 leading-relaxed"
           style={{ fontFamily: 'var(--font-dm-sans)' }}
         >
-          Sube facturas, contratos y nóminas. DocuAI extrae los datos automáticamente,
+          Sube facturas, contratos y nóminas. Lexia extrae los datos automáticamente,
           los clasifica y responde cualquier pregunta en segundos.
         </motion.p>
 

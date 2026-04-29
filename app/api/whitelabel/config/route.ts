@@ -9,7 +9,7 @@ import { handleApiError, ValidationError } from '@/lib/utils/errors'
 
 const HEX_COLOR_RE = /^#[0-9a-fA-F]{6}$/
 const DOMAIN_RE = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+$/
-const BLOCKED_DOMAINS = ['docuai', 'vercel', 'clerk', 'supabase', 'anthropic', 'stripe']
+const BLOCKED_DOMAINS = ['lexia', 'docuai', 'vercel', 'clerk', 'supabase', 'anthropic', 'stripe']
 
 const ConfigSchema = z.object({
   brand_name: z.string().min(1).max(80),
@@ -17,7 +17,7 @@ const ConfigSchema = z.object({
   primary_dark: z.string().regex(HEX_COLOR_RE, 'Color debe ser hexadecimal (#rrggbb)').optional(),
   custom_domain: z.string().regex(DOMAIN_RE, 'Dominio inválido').optional().nullable(),
   support_email: z.string().email('Email inválido').optional().nullable(),
-  hide_docuai_branding: z.boolean().optional(),
+  hide_brand: z.boolean().optional(),
   custom_login_message: z.string().max(200).optional().nullable(),
   custom_footer_text: z.string().max(100).optional().nullable(),
 })
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
 
     const { data: d } = parsed
 
-    // Block domains that could impersonate DocuAI
+    // Block domains that could impersonate Lexia
     if (d.custom_domain) {
       const domainLower = d.custom_domain.toLowerCase()
       if (BLOCKED_DOMAINS.some(b => domainLower.includes(b))) {

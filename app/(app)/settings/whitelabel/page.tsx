@@ -18,7 +18,7 @@ interface FormState {
   primary_dark: string
   custom_domain: string
   support_email: string
-  hide_docuai_branding: boolean
+  hide_brand: boolean
   custom_login_message: string
   custom_footer_text: string
 }
@@ -29,7 +29,7 @@ const DEFAULTS: FormState = {
   primary_dark: '#085041',
   custom_domain: '',
   support_email: '',
-  hide_docuai_branding: false,
+  hide_brand: false,
   custom_login_message: '',
   custom_footer_text: '',
 }
@@ -64,7 +64,7 @@ export default function WhitelabelSettingsPage() {
         primary_dark: cfgData.config.primary_dark ?? '#085041',
         custom_domain: cfgData.config.custom_domain ?? '',
         support_email: cfgData.config.support_email ?? '',
-        hide_docuai_branding: cfgData.config.hide_docuai_branding ?? false,
+        hide_brand: cfgData.config.hide_brand ?? false,
         custom_login_message: cfgData.config.custom_login_message ?? '',
         custom_footer_text: cfgData.config.custom_footer_text ?? '',
       })
@@ -320,12 +320,12 @@ export default function WhitelabelSettingsPage() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label>Ocultar branding de DocuAI</Label>
-                  <p className="text-xs text-muted-foreground">Elimina "Powered by DocuAI" de la interfaz</p>
+                  <Label>Ocultar branding de Lexia</Label>
+                  <p className="text-xs text-muted-foreground">Elimina "Powered by Lexia" de la interfaz</p>
                 </div>
                 <Switch
-                  checked={form.hide_docuai_branding}
-                  onCheckedChange={v => set('hide_docuai_branding', v)}
+                  checked={form.hide_brand}
+                  onCheckedChange={v => set('hide_brand', v)}
                   disabled={!isWlPro}
                 />
               </div>
@@ -395,7 +395,7 @@ export default function WhitelabelSettingsPage() {
                 </div>
                 {/* Footer preview */}
                 <div className="border-t px-2 py-1 bg-muted/20 text-[9px] text-muted-foreground text-center">
-                  {form.custom_footer_text || (!form.hide_docuai_branding ? 'Powered by DocuAI' : '')}
+                  {form.custom_footer_text || (!form.hide_brand ? 'Powered by Lexia' : '')}
                 </div>
               </div>
             </CardContent>

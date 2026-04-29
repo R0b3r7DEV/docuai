@@ -1,4 +1,4 @@
--- DocuAI — Schema inicial
+-- Lexia — Schema inicial
 -- Ejecutar en Supabase SQL Editor o via CLI: supabase db push
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

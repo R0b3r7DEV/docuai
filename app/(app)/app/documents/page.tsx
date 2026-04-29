@@ -36,7 +36,7 @@ function DocumentsContent() {
       {showUpgradeSuccess && (
         <div className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm bg-emerald-50 border border-emerald-200 text-emerald-800">
           <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />
-          <span className="font-medium">¡Bienvenido a DocuAI Pro!</span>
+          <span className="font-medium">¡Bienvenido a Lexia Pro!</span>
           <span className="text-emerald-700">Ya puedes subir hasta 20 documentos al mes.</span>
         </div>
       )}

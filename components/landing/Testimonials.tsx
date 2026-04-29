@@ -6,13 +6,13 @@ import { Quote } from 'lucide-react'
 
 const testimonials = [
   {
-    quote: 'DocuAI ha reducido el tiempo que dedicamos a procesar facturas en un 80%. Es increíble lo preciso que es con los datos.',
+    quote: 'Lexia ha reducido el tiempo que dedicamos a procesar facturas en un 80%. Es increíble lo preciso que es con los datos.',
     author: 'Ana García',
     role: 'CEO de Distribuciones García S.L.',
     initials: 'AG',
   },
   {
-    quote: 'Como gestora de 15 empresas, DocuAI me ha cambiado la vida. Proceso cientos de documentos al mes sin apenas esfuerzo.',
+    quote: 'Como gestora de 15 empresas, Lexia me ha cambiado la vida. Proceso cientos de documentos al mes sin apenas esfuerzo.',
     author: 'Marta López',
     role: 'Gestora en Asesoría LópezCo',
     initials: 'ML',

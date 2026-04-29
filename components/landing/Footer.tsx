@@ -42,7 +42,7 @@ export function Footer() {
               <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#1D9E75' }}>
                 <FileText className="h-4 w-4 text-white" />
               </div>
-              <span className="font-bold text-lg text-white">DocuAI</span>
+              <span className="font-bold text-lg text-white">Lexia</span>
             </div>
             <p className="text-sm leading-relaxed max-w-44" style={{ color: 'rgba(255,255,255,0.38)' }}>
               Inteligencia documental para empresas españolas impulsada por Claude AI.
@@ -74,7 +74,7 @@ export function Footer() {
           style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
         >
           <p className="text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>
-            © {new Date().getFullYear()} DocuAI. Todos los derechos reservados.
+            © {new Date().getFullYear()} Lexia · Hecho con IA en España 🇪🇸
           </p>
           <div className="flex gap-5">
             <Link href="/sign-in" className="text-xs transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.28)' }}>

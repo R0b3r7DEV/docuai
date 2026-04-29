@@ -83,7 +83,7 @@ const PLANS = [
     features: [
       'Hasta 100 clientes bajo tu marca',
       'Logo, colores y nombre propios',
-      'Oculta el branding de DocuAI',
+      'Oculta el branding de Lexia',
       'Email de soporte personalizado',
       'Footer y textos personalizados',
     ],

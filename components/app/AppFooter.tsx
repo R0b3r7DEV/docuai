@@ -12,7 +12,7 @@ export function AppFooter() {
       {footerText
         ? footerText
         : !hideDocuaiBranding
-          ? 'Powered by DocuAI'
+          ? 'Powered by Lexia'
           : null}
     </div>
   )
