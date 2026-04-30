@@ -45,25 +45,25 @@ jobs:
       - name: Build
         run: pnpm build
         env:
-          # Supabase
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # Supabase — fallback a placeholder para que el build no falle sin secrets
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-key' }}
           # Clerk
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-          CLERK_WEBHOOK_SECRET: ${{ secrets.CLERK_WEBHOOK_SECRET }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'pk_test_placeholder' }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY || 'sk_test_placeholder' }}
+          CLERK_WEBHOOK_SECRET: ${{ secrets.CLERK_WEBHOOK_SECRET || 'whsec_placeholder' }}
           # Stripe
-          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
-          STRIPE_GESTORIA_PRICE_ID: ${{ secrets.STRIPE_GESTORIA_PRICE_ID }}
-          STRIPE_GESTORIA_PRO_PRICE_ID: ${{ secrets.STRIPE_GESTORIA_PRO_PRICE_ID }}
-          STRIPE_WL_PRICE_ID: ${{ secrets.STRIPE_WL_PRICE_ID }}
-          STRIPE_WL_PRO_PRICE_ID: ${{ secrets.STRIPE_WL_PRO_PRICE_ID }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY || 'sk_test_placeholder' }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET || 'whsec_placeholder' }}
+          STRIPE_GESTORIA_PRICE_ID: ${{ secrets.STRIPE_GESTORIA_PRICE_ID || 'price_placeholder' }}
+          STRIPE_GESTORIA_PRO_PRICE_ID: ${{ secrets.STRIPE_GESTORIA_PRO_PRICE_ID || 'price_placeholder' }}
+          STRIPE_WL_PRICE_ID: ${{ secrets.STRIPE_WL_PRICE_ID || 'price_placeholder' }}
+          STRIPE_WL_PRO_PRICE_ID: ${{ secrets.STRIPE_WL_PRO_PRICE_ID || 'price_placeholder' }}
           # App
           NEXT_PUBLIC_APP_URL: https://lexia.es
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          # Sentry (optional — build succeeds without it)
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY || 'sk-ant-placeholder' }}
+          # Sentry (opcional)
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
