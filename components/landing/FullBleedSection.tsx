@@ -109,12 +109,9 @@ export function FullBleedSection({ image, imagePosition, badge, title, descripti
   )
 
   return (
-    <section style={{
-      display: 'flex',
-      flexDirection: 'row',
-      minHeight: '70vh',
-    }}
-    className="flex-col md:flex-row"
+    <section
+      className="flex flex-col md:flex-row"
+      style={{ minHeight: '70vh' }}
     >
       {imagePosition === 'left' ? (
         <>

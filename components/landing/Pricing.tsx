@@ -154,7 +154,7 @@ export function Pricing() {
         </div>
       </motion.div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0' }} className="grid-cols-1 md:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-3">
         {plans.map(({ key, badge, highlight, name, priceMonthly, features, cta, href }, i) => {
           const price = annual ? Math.round(priceMonthly * 0.8) : priceMonthly
 

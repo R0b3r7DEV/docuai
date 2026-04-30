@@ -123,7 +123,7 @@ export function ProductGrid() {
         </motion.h2>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }} className="grid-cols-1 md:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-3">
         {cards.map(({ svg: SVG, badge, badgeGreen, title, subtitle, link, href }, i) => (
           <motion.div
             key={title}

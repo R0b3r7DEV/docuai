@@ -56,13 +56,7 @@ export function StatsBar() {
       ref={ref}
       style={{ background: '#0A0A0A', borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
     >
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        padding: '60px 0',
-      }}
-      className="grid-cols-2 md:grid-cols-4"
-      >
+      <div className="grid grid-cols-2 md:grid-cols-4" style={{ padding: '60px 0' }}>
         {stats.map(({ value, prefix, suffix, label }, i) => (
           <div
             key={label}

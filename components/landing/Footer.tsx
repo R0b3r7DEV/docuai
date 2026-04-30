@@ -34,14 +34,7 @@ export function Footer() {
       borderTop: '0.5px solid rgba(255,255,255,0.08)',
       padding: '60px clamp(24px, 5vw, 80px) 40px',
     }}>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr 1fr',
-        gap: '40px',
-        marginBottom: '48px',
-      }}
-      className="grid-cols-1 sm:grid-cols-3"
-      >
+      <div className="grid grid-cols-1 sm:grid-cols-3" style={{ gap: '40px', marginBottom: '48px' }}>
         {/* Brand */}
         <div>
           <span style={{
