@@ -91,8 +91,12 @@ function ChatImage() {
 }
 
 export default async function LandingPage() {
-  const { userId } = await auth()
-  if (userId) redirect('/app/dashboard')
+  try {
+    const { userId } = await auth()
+    if (userId) redirect('/app/dashboard')
+  } catch {
+    // Clerk no configurado o clave inválida — renderizar landing normalmente
+  }
 
   return (
     <main style={{ background: '#0A0A0A' }}>
