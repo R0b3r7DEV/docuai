@@ -3,45 +3,54 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Check, Sparkles, Building2 } from 'lucide-react'
 import { PLAN_PRICES } from '@/lib/stripe/constants'
 
 const plans = [
   {
-    name: 'Trial',
-    Icon: Sparkles,
-    priceMonthly: 0,
-    priceAnnual: 0,
-    description: 'Para probarlo sin compromiso',
-    features: ['2 documentos incluidos', 'Extracción automática IA', 'Chat básico', 'Exportación Excel'],
+    key: 'empresa',
+    badge: null,
+    highlight: false,
+    name: 'Empresa',
+    priceMonthly: PLAN_PRICES.pro,
+    features: [
+      'Hasta 20 documentos/mes',
+      'Chat ilimitado con IA',
+      'Exportación Excel',
+      'Soporte por email',
+    ],
     cta: 'Empezar gratis',
     href: '/sign-up',
-    highlight: false,
-    badge: null,
   },
   {
-    name: 'Pro',
-    Icon: Sparkles,
-    priceMonthly: PLAN_PRICES.pro,
-    priceAnnual: Math.round(PLAN_PRICES.pro * 0.8),
-    description: 'Para pymes y autónomos',
-    features: ['20 documentos al mes', 'Todos los tipos de documento', 'Chat IA ilimitado', 'Exportación Excel', 'Soporte por email'],
-    cta: 'Suscribirse',
-    href: '/sign-up',
+    key: 'gestoria',
+    badge: 'MÁS POPULAR',
     highlight: true,
-    badge: 'Más popular',
+    name: 'Gestoría',
+    priceMonthly: PLAN_PRICES.gestoria,
+    features: [
+      'Hasta 50 empresas clientes',
+      '20 documentos/mes por cliente',
+      'Panel multi-empresa',
+      'Invitaciones automáticas',
+      'Resúmenes mensuales',
+    ],
+    cta: 'Hablar con ventas',
+    href: '/sign-up',
   },
   {
-    name: 'Gestoría',
-    Icon: Building2,
-    priceMonthly: PLAN_PRICES.gestoria,
-    priceAnnual: Math.round(PLAN_PRICES.gestoria * 0.8),
-    description: 'Para gestorías y contables',
-    features: ['Hasta 10 empresas clientes', 'Panel multi-empresa', '200 docs/mes por cliente', 'Invitaciones a clientes', 'Soporte prioritario'],
-    cta: 'Empezar',
-    href: '/sign-up',
-    highlight: false,
+    key: 'whitelabel',
     badge: null,
+    highlight: false,
+    name: 'White-Label',
+    priceMonthly: PLAN_PRICES.whitelabel,
+    features: [
+      'Tu marca y dominio',
+      'Clientes ilimitados',
+      'Panel white-label',
+      'Soporte prioritario',
+    ],
+    cta: 'Solicitar demo',
+    href: '/sign-up',
   },
 ]
 
@@ -49,118 +58,176 @@ export function Pricing() {
   const [annual, setAnnual] = useState(false)
 
   return (
-    <section
-      id="precios"
-      className="py-24 px-6"
-      style={{ background: '#0A0A0A', borderTop: '1px solid rgba(255,255,255,0.05)' }}
-    >
-      <div className="max-w-5xl mx-auto">
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2
-            className="text-3xl sm:text-4xl font-bold text-white mb-4"
-            style={{ fontFamily: 'var(--font-playfair)' }}
-          >
-            Precios simples y transparentes
-          </h2>
-          <p className="text-white/50 max-w-md mx-auto mb-8" style={{ fontFamily: 'var(--font-dm-sans)' }}>
-            Empieza gratis. Escala cuando lo necesites. Cancela cuando quieras.
-          </p>
+    <section id="precios" style={{ background: '#FAFAF8', padding: '96px clamp(24px, 5vw, 80px)' }}>
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+        style={{ marginBottom: '64px' }}
+      >
+        <h2 style={{
+          fontFamily: 'var(--font-dm-sans, system-ui)',
+          fontSize: 'clamp(32px, 4vw, 48px)',
+          fontWeight: 200,
+          color: '#0A0A0A',
+          letterSpacing: '-0.01em',
+          marginBottom: '40px',
+        }}>
+          Encuentre su plan.
+        </h2>
 
-          {/* Annual/monthly toggle */}
-          <div
-            className="inline-flex items-center gap-3 px-5 py-2 rounded-full"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+        {/* Annual toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button
+            onClick={() => setAnnual(false)}
+            style={{
+              fontSize: '11px',
+              fontWeight: 300,
+              letterSpacing: '0.1em',
+              color: !annual ? '#0A0A0A' : '#888888',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              transition: 'color 300ms',
+            }}
           >
-            <button
-              onClick={() => setAnnual(false)}
-              className="text-sm transition-colors"
-              style={{ color: !annual ? '#fff' : 'rgba(255,255,255,0.4)', fontWeight: !annual ? 500 : 400 }}
-            >
-              Mensual
-            </button>
-            <button
-              onClick={() => setAnnual(v => !v)}
-              className="relative w-10 h-5 rounded-full transition-colors"
-              style={{ background: annual ? '#1D9E75' : 'rgba(255,255,255,0.15)' }}
-              aria-checked={annual}
-              role="switch"
-            >
-              <span
-                className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all duration-200"
-                style={{ left: annual ? '22px' : '2px' }}
-              />
-            </button>
-            <button
-              onClick={() => setAnnual(true)}
-              className="text-sm transition-colors flex items-center gap-1.5"
-              style={{ color: annual ? '#fff' : 'rgba(255,255,255,0.4)', fontWeight: annual ? 500 : 400 }}
-            >
-              Anual
-              <span
-                className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
-                style={{ background: 'rgba(29,158,117,0.2)', color: '#4DF0B8' }}
-              >
-                −20%
-              </span>
-            </button>
-          </div>
-        </motion.div>
+            MENSUAL
+          </button>
+          <button
+            onClick={() => setAnnual(v => !v)}
+            style={{
+              width: '40px',
+              height: '20px',
+              borderRadius: '10px',
+              background: annual ? '#1D9E75' : '#D0CEC8',
+              border: 'none',
+              cursor: 'pointer',
+              position: 'relative',
+              transition: 'background 300ms',
+            }}
+            role="switch"
+            aria-checked={annual}
+          >
+            <span style={{
+              position: 'absolute',
+              top: '2px',
+              left: annual ? '22px' : '2px',
+              width: '16px',
+              height: '16px',
+              borderRadius: '50%',
+              background: '#fff',
+              transition: 'left 300ms cubic-bezier(0.25,0.1,0.25,1)',
+            }} />
+          </button>
+          <button
+            onClick={() => setAnnual(true)}
+            style={{
+              fontSize: '11px',
+              fontWeight: 300,
+              letterSpacing: '0.1em',
+              color: annual ? '#0A0A0A' : '#888888',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'color 300ms',
+            }}
+          >
+            ANUAL
+            <span style={{
+              fontSize: '10px',
+              fontWeight: 300,
+              letterSpacing: '0.06em',
+              color: annual ? '#1D9E75' : '#888888',
+              background: annual ? 'rgba(29,158,117,0.1)' : 'rgba(136,136,136,0.1)',
+              padding: '2px 8px',
+              transition: 'all 300ms',
+            }}>
+              −20%
+            </span>
+          </button>
+        </div>
+      </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-5">
-          {plans.map(({ name, Icon, priceMonthly, priceAnnual, description, features, cta, href, highlight, badge }, i) => (
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0' }} className="grid-cols-1 md:grid-cols-3">
+        {plans.map(({ key, badge, highlight, name, priceMonthly, features, cta, href }, i) => {
+          const price = annual ? Math.round(priceMonthly * 0.8) : priceMonthly
+
+          return (
             <motion.div
-              key={name}
-              initial={{ opacity: 0, y: 32 }}
+              key={key}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.55, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="relative rounded-2xl p-7 flex flex-col gap-6"
-              style={
-                highlight
-                  ? {
-                      background: 'rgba(29,158,117,0.05)',
-                      border: '2px solid rgba(29,158,117,0.35)',
-                      boxShadow: '0 0 40px rgba(29,158,117,0.08)',
-                    }
-                  : {
-                      background: 'rgba(255,255,255,0.025)',
-                      border: '1px solid rgba(255,255,255,0.06)',
-                    }
-              }
+              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+              style={{
+                border: `0.5px solid ${highlight ? '#1D9E75' : '#E0DED8'}`,
+                borderTop: highlight ? '2px solid #1D9E75' : '0.5px solid #E0DED8',
+                padding: '40px 36px 44px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0',
+                position: 'relative',
+              }}
             >
               {badge && (
-                <div
-                  className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-white text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap"
-                  style={{ background: '#1D9E75' }}
-                >
+                <div style={{
+                  position: 'absolute',
+                  top: '-12px',
+                  left: '36px',
+                  fontSize: '10px',
+                  fontWeight: 300,
+                  letterSpacing: '0.12em',
+                  color: '#FAFAF8',
+                  background: '#1D9E75',
+                  padding: '3px 12px',
+                }}>
                   {badge}
                 </div>
               )}
 
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Icon className="h-4 w-4" style={{ color: '#1D9E75' }} />
-                  <span className="text-white/65 text-sm font-medium">{name}</span>
-                </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-white">
-                    {annual ? priceAnnual : priceMonthly}€
-                  </span>
-                  <span className="text-white/38 text-sm">/mes</span>
-                </div>
-                <p className="text-white/38 text-xs mt-1">{description}</p>
+              <p style={{
+                fontSize: '13px',
+                fontWeight: 300,
+                letterSpacing: '0.08em',
+                color: '#888888',
+                marginBottom: '16px',
+              }}>
+                {name.toUpperCase()}
+              </p>
+
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '32px' }}>
+                <span style={{
+                  fontFamily: 'var(--font-dm-sans, system-ui)',
+                  fontSize: '56px',
+                  fontWeight: 200,
+                  color: '#0A0A0A',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1,
+                }}>
+                  {price}
+                </span>
+                <span style={{ fontSize: '14px', fontWeight: 300, color: '#888888' }}>€ / mes</span>
               </div>
 
-              <ul className="flex flex-col gap-2.5 flex-1">
-                {features.map(f => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-white/65">
-                    <Check className="h-3.5 w-3.5 shrink-0 mt-0.5" style={{ color: '#1D9E75' }} />
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 40px', display: 'flex', flexDirection: 'column', gap: '0', flex: 1 }}>
+                {features.map((f, fi) => (
+                  <li
+                    key={f}
+                    style={{
+                      fontSize: '13px',
+                      fontWeight: 300,
+                      color: '#0A0A0A',
+                      padding: '13px 0',
+                      borderBottom: fi < features.length - 1 ? '0.5px solid #E0DED8' : 'none',
+                      lineHeight: 1.5,
+                    }}
+                  >
                     {f}
                   </li>
                 ))}
@@ -168,27 +235,40 @@ export function Pricing() {
 
               <Link
                 href={href}
-                className="text-center py-3 rounded-xl text-sm font-semibold transition-all hover:-translate-y-px"
-                style={
-                  highlight
-                    ? { background: '#1D9E75', color: '#fff' }
-                    : {
-                        background: 'rgba(255,255,255,0.05)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        color: '#fff',
-                      }
-                }
+                style={{
+                  display: 'block',
+                  textAlign: 'center',
+                  fontSize: '11px',
+                  fontWeight: 300,
+                  letterSpacing: '0.12em',
+                  padding: '14px',
+                  textDecoration: 'none',
+                  transition: 'background 300ms, color 300ms',
+                  ...(highlight
+                    ? { background: '#1D9E75', color: '#FAFAF8' }
+                    : { background: '#0A0A0A', color: '#FAFAF8' }
+                  ),
+                }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               >
-                {cta}
+                {cta.toUpperCase()}
               </Link>
             </motion.div>
-          ))}
-        </div>
-
-        <p className="text-center text-xs mt-8" style={{ color: 'rgba(255,255,255,0.25)' }}>
-          Sin tarjeta de crédito para empezar · Pago seguro con Stripe · Cancela cuando quieras
-        </p>
+          )
+        })}
       </div>
+
+      <p style={{
+        fontSize: '11px',
+        fontWeight: 300,
+        letterSpacing: '0.06em',
+        color: '#888888',
+        marginTop: '32px',
+        textAlign: 'center',
+      }}>
+        Sin tarjeta de crédito para empezar · Pago seguro con Stripe · Cancela cuando quieras
+      </p>
     </section>
   )
 }

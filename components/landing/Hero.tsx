@@ -1,124 +1,223 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { ArrowRight, Sparkles, Shield, Clock, BarChart3 } from 'lucide-react'
-import { ParticleBackground } from './effects/ParticleBackground'
+import { motion, useMotionValue, useTransform } from 'framer-motion'
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.1 } },
+const words1 = ['Tus', 'documentos.']
+const words2 = ['Organizados.']
+
+function WordReveal({ words, delay }: { words: string[]; delay: number }) {
+  return (
+    <span style={{ display: 'inline' }}>
+      {words.map((word, i) => (
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: delay + i * 0.08, ease: [0.25, 0.1, 0.25, 1] }}
+          style={{ display: 'inline-block', marginRight: i < words.length - 1 ? '0.28em' : 0 }}
+        >
+          {word}
+        </motion.span>
+      ))}
+    </span>
+  )
 }
-
-const item = {
-  hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] as const } },
-}
-
-const trust = [
-  { icon: Shield, text: 'Datos cifrados en tránsito y reposo' },
-  { icon: Clock, text: 'Extracción en menos de 10 segundos' },
-  { icon: BarChart3, text: 'Exportación a Excel con un clic' },
-]
 
 export function Hero() {
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const bgX = useTransform(mouseX, [-1, 1], [-10, 10])
+  const bgY = useTransform(mouseY, [-1, 1], [-7, 7])
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect()
+    mouseX.set(((e.clientX - left) / width - 0.5) * 2)
+    mouseY.set(((e.clientY - top) / height - 0.5) * 2)
+  }
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16" style={{ background: '#0A0A0A' }}>
-      <ParticleBackground />
-
-      {/* Dot grid */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
-        }}
-      />
-
-      {/* Center glow */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(29,158,117,0.13) 0%, transparent 65%)' }}
-      />
-
+    <section
+      onMouseMove={handleMouseMove}
+      style={{
+        position: 'relative',
+        height: '100dvh',
+        minHeight: '600px',
+        overflow: 'hidden',
+        background: '#0A0A0A',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        paddingBottom: '13vh',
+      }}
+    >
+      {/* Parallax background */}
       <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="relative z-10 max-w-5xl mx-auto px-6 text-center py-24"
+        style={{ x: bgX, y: bgY, position: 'absolute', inset: '-5%', width: '110%', height: '110%' }}
       >
-        <motion.div variants={item}>
-          <span
-            className="inline-flex items-center gap-2 text-xs font-medium px-4 py-1.5 rounded-full mb-8"
-            style={{
-              background: 'rgba(29,158,117,0.1)',
-              border: '1px solid rgba(29,158,117,0.25)',
-              color: '#4DF0B8',
-            }}
-          >
-            <Sparkles className="h-3 w-3" />
-            Impulsado por Claude AI de Anthropic
-          </span>
-        </motion.div>
-
-        <motion.h1
-          variants={item}
-          className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.06] mb-6 text-white"
-          style={{ fontFamily: 'var(--font-playfair)' }}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="100%"
+          height="100%"
+          style={{ position: 'absolute', inset: 0 }}
         >
-          Tu empresa,{' '}
-          <span
-            style={{
-              background: 'linear-gradient(135deg, #1D9E75 0%, #4DF0B8 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            más inteligente
-          </span>
-        </motion.h1>
+          <defs>
+            <pattern id="diag" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+              <line x1="0" y1="0" x2="0" y2="40" stroke="rgba(255,255,255,0.025)" strokeWidth="1" />
+            </pattern>
+            <radialGradient id="glow" cx="75%" cy="80%" r="55%">
+              <stop offset="0%" stopColor="rgba(29,158,117,0.12)" />
+              <stop offset="100%" stopColor="rgba(29,158,117,0)" />
+            </radialGradient>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#diag)" />
+          <rect width="100%" height="100%" fill="url(#glow)" />
+        </svg>
+      </motion.div>
 
+      {/* Vignette */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'radial-gradient(ellipse at center, transparent 30%, rgba(10,10,10,0.6) 100%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Content */}
+      <div style={{
+        position: 'relative',
+        zIndex: 10,
+        textAlign: 'center',
+        padding: '0 clamp(24px, 6vw, 80px)',
+        maxWidth: '860px',
+        width: '100%',
+      }}>
         <motion.p
-          variants={item}
-          className="text-xl text-white/55 max-w-2xl mx-auto mb-10 leading-relaxed"
-          style={{ fontFamily: 'var(--font-dm-sans)' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+          style={{
+            fontSize: '11px',
+            fontWeight: 300,
+            letterSpacing: '0.2em',
+            color: '#1D9E75',
+            marginBottom: '28px',
+          }}
         >
-          Sube facturas, contratos y nóminas. Lexia extrae los datos automáticamente,
-          los clasifica y responde cualquier pregunta en segundos.
+          GESTIÓN DOCUMENTAL · INTELIGENCIA ARTIFICIAL
         </motion.p>
 
-        <motion.div variants={item} className="flex flex-col sm:flex-row gap-3 justify-center mb-16">
+        <h1 style={{
+          fontFamily: 'var(--font-dm-sans, system-ui)',
+          fontSize: 'clamp(52px, 9vw, 96px)',
+          fontWeight: 200,
+          lineHeight: 1.08,
+          letterSpacing: '-0.02em',
+          color: '#FAFAF8',
+          marginBottom: '28px',
+        }}>
+          <WordReveal words={words1} delay={0.3} />
+          <br />
+          <WordReveal words={words2} delay={0.5} />
+        </h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+          style={{
+            fontSize: '16px',
+            fontWeight: 300,
+            color: 'rgba(250,250,248,0.5)',
+            maxWidth: '440px',
+            margin: '0 auto 40px',
+            lineHeight: 1.65,
+          }}
+        >
+          La IA lee, clasifica y responde.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
+          style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}
+        >
           <Link
             href="/sign-up"
-            className="inline-flex items-center justify-center gap-2 text-white px-8 py-3.5 rounded-xl text-base font-semibold transition-all hover:-translate-y-0.5"
             style={{
-              background: '#1D9E75',
-              boxShadow: '0 0 0 0 rgba(29,158,117,0)',
+              fontSize: '11px',
+              fontWeight: 300,
+              letterSpacing: '0.15em',
+              color: '#0A0A0A',
+              background: '#FAFAF8',
+              padding: '14px 32px',
+              textDecoration: 'none',
+              transition: 'background 300ms',
             }}
-            onMouseEnter={e => ((e.currentTarget as HTMLElement).style.boxShadow = '0 0 28px rgba(29,158,117,0.40)')}
-            onMouseLeave={e => ((e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 0 rgba(29,158,117,0)')}
+            onMouseEnter={e => (e.currentTarget.style.background = '#E8E6E0')}
+            onMouseLeave={e => (e.currentTarget.style.background = '#FAFAF8')}
           >
-            Empezar gratis
-            <ArrowRight className="h-4 w-4" />
+            DESCUBRIR
           </Link>
           <a
-            href="#demo"
-            className="inline-flex items-center justify-center gap-2 text-white px-8 py-3.5 rounded-xl text-base font-semibold transition-all hover:bg-white/10"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+            href="#producto"
+            style={{
+              fontSize: '11px',
+              fontWeight: 300,
+              letterSpacing: '0.15em',
+              color: '#FAFAF8',
+              padding: '14px 32px',
+              border: '0.5px solid rgba(250,250,248,0.3)',
+              textDecoration: 'none',
+              transition: 'border-color 300ms',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(250,250,248,0.7)')}
+            onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(250,250,248,0.3)')}
           >
-            Ver demo en vídeo
+            VER DEMO
           </a>
         </motion.div>
+      </div>
 
-        <motion.div variants={item} className="flex flex-wrap items-center justify-center gap-8">
-          {trust.map(({ icon: Icon, text }) => (
-            <span key={text} className="flex items-center gap-1.5 text-xs text-white/38">
-              <Icon className="h-3.5 w-3.5" style={{ color: '#1D9E75' }} />
-              {text}
-            </span>
-          ))}
-        </motion.div>
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.4, duration: 0.8 }}
+        style={{
+          position: 'absolute',
+          bottom: '36px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '10px',
+          zIndex: 10,
+        }}
+      >
+        <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.12em', color: 'rgba(250,250,248,0.3)' }}>
+          Descubra más
+        </span>
+        <div style={{ width: '1px', height: '40px', background: 'rgba(250,250,248,0.15)', overflow: 'hidden', position: 'relative' }}>
+          <style>{`
+            @keyframes scrollLine {
+              0% { transform: translateY(-100%); opacity: 1; }
+              100% { transform: translateY(100%); opacity: 0; }
+            }
+          `}</style>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '50%',
+            background: 'rgba(250,250,248,0.6)',
+            animation: 'scrollLine 1.6s cubic-bezier(0.25,0.1,0.25,1) infinite',
+          }} />
+        </div>
       </motion.div>
     </section>
   )

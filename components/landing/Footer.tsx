@@ -1,90 +1,116 @@
 import Link from 'next/link'
-import { FileText } from 'lucide-react'
 
-const columns = [
-  {
-    title: 'Producto',
-    links: [
-      { label: 'Características', href: '#caracteristicas' },
-      { label: 'Cómo funciona', href: '#como-funciona' },
-      { label: 'Precios', href: '#precios' },
-      { label: 'Demo', href: '#demo' },
-    ],
-  },
-  {
-    title: 'Plataforma',
-    links: [
-      { label: 'Modo gestoría', href: '/sign-up' },
-      { label: 'White-label', href: '/sign-up' },
-      { label: 'API', href: '#' },
-    ],
-  },
-  {
-    title: 'Legal',
-    links: [
-      { label: 'Política de privacidad', href: '/privacy' },
-      { label: 'Términos de servicio', href: '/terms' },
-      { label: 'Contacto', href: 'mailto:info@lexia.es' },
-    ],
-  },
+const col1 = [
+  { label: 'PRODUCTO', href: '#producto' },
+  { label: 'PRECIOS', href: '#precios' },
+  { label: 'GESTORÍAS', href: '#gestorias' },
+  { label: 'WHITE-LABEL', href: '/sign-up' },
 ]
+
+const col2 = [
+  { label: 'PRIVACIDAD', href: '/privacy' },
+  { label: 'TÉRMINOS', href: '/terms' },
+  { label: 'COOKIES', href: '/privacy#cookies' },
+  { label: 'CONTACTO', href: 'mailto:hola@lexia.es' },
+]
+
+const linkStyle = {
+  fontSize: '11px',
+  fontWeight: 300,
+  letterSpacing: '0.08em',
+  color: 'rgba(250,250,248,0.4)',
+  textDecoration: 'none',
+  display: 'block',
+  marginBottom: '16px',
+  transition: 'color 300ms',
+} as const
 
 export function Footer() {
   return (
-    <footer
-      className="py-16 px-6"
-      style={{ background: '#080808', borderTop: '1px solid rgba(255,255,255,0.05)' }}
-    >
-      <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-10 mb-12">
-          <div>
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#1D9E75' }}>
-                <FileText className="h-4 w-4 text-white" />
-              </div>
-              <span className="font-bold text-lg text-white">Lexia</span>
-            </div>
-            <p className="text-sm leading-relaxed max-w-44" style={{ color: 'rgba(255,255,255,0.38)' }}>
-              Inteligencia documental para empresas españolas impulsada por Claude AI.
-            </p>
-          </div>
+    <footer style={{
+      background: '#0A0A0A',
+      borderTop: '0.5px solid rgba(255,255,255,0.08)',
+      padding: '60px clamp(24px, 5vw, 80px) 40px',
+    }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
+        gap: '40px',
+        marginBottom: '48px',
+      }}
+      className="grid-cols-1 sm:grid-cols-3"
+      >
+        {/* Brand */}
+        <div>
+          <span style={{
+            display: 'block',
+            fontFamily: 'var(--font-dm-sans, system-ui)',
+            fontSize: '16px',
+            fontWeight: 300,
+            letterSpacing: '0.14em',
+            color: '#FAFAF8',
+            marginBottom: '16px',
+          }}>
+            LEXIA
+          </span>
+          <p style={{
+            fontSize: '11px',
+            fontWeight: 300,
+            letterSpacing: '0.04em',
+            color: 'rgba(250,250,248,0.35)',
+            lineHeight: 1.7,
+            maxWidth: '200px',
+          }}>
+            Tus documentos.<br />Organizados.
+          </p>
+        </div>
 
-          {columns.map(col => (
-            <div key={col.title}>
-              <h3 className="text-white text-sm font-semibold mb-4">{col.title}</h3>
-              <ul className="flex flex-col gap-2.5">
-                {col.links.map(link => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm transition-colors hover:text-white"
-                      style={{ color: 'rgba(255,255,255,0.38)' }}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        {/* Col 1 */}
+        <div>
+          {col1.map(({ label, href }) => (
+            <Link
+              key={label}
+              href={href}
+              style={linkStyle}
+              onMouseEnter={e => (e.currentTarget.style.color = '#FAFAF8')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(250,250,248,0.4)')}
+            >
+              {label}
+            </Link>
           ))}
         </div>
 
-        <div
-          className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
-        >
-          <p className="text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>
-            © {new Date().getFullYear()} Lexia · Hecho con IA en España 🇪🇸
-          </p>
-          <div className="flex gap-5">
-            <Link href="/sign-in" className="text-xs transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.28)' }}>
-              Acceder
+        {/* Col 2 */}
+        <div>
+          {col2.map(({ label, href }) => (
+            <Link
+              key={label}
+              href={href}
+              style={linkStyle}
+              onMouseEnter={e => (e.currentTarget.style.color = '#FAFAF8')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(250,250,248,0.4)')}
+            >
+              {label}
             </Link>
-            <Link href="/sign-up" className="text-xs transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.28)' }}>
-              Registrarse
-            </Link>
-          </div>
+          ))}
         </div>
+      </div>
+
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingTop: '24px',
+        borderTop: '0.5px solid rgba(255,255,255,0.06)',
+        flexWrap: 'wrap',
+        gap: '12px',
+      }}>
+        <span style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.06em', color: 'rgba(250,250,248,0.25)' }}>
+          © {new Date().getFullYear()} Lexia
+        </span>
+        <span style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.06em', color: 'rgba(250,250,248,0.25)' }}>
+          Powered by Anthropic Claude
+        </span>
       </div>
     </footer>
   )

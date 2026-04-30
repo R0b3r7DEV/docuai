@@ -50,3 +50,9 @@ next-env.d.ts
 
 # Tesseract trained data files (downloaded at runtime)
 *.traineddata
+
+# IDE workspace files (machine-specific)
+*.code-workspace
+
+# Test assets that should not be publicly accessible
+public/test-*
