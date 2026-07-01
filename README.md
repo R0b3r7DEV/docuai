@@ -18,7 +18,11 @@
   <img alt="Vitest" src="https://img.shields.io/badge/Vitest-6E9F18?style=flat&logo=vitest&logoColor=white" />
 </p>
 
-🌐 Production: **[lexia.es](https://lexia.es)** &nbsp;·&nbsp; 🇪🇸 *A Spanish version of this document is available on request.*
+<p>
+  <a href="https://docuai-one.vercel.app/"><img alt="Live demo" src="https://img.shields.io/badge/🚀_Live_demo-docuai--one.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white" /></a>
+</p>
+
+🌐 **Live demo:** [docuai-one.vercel.app](https://docuai-one.vercel.app/) &nbsp;·&nbsp; 🇪🇸 *A Spanish version of this document is available on request.*
 
 <!-- TODO: screenshot — dashboard with expense charts -->
 
