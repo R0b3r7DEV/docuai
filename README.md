@@ -1,345 +1,162 @@
-# Lexia — Gestión documental con IA
+# Lexia — AI-Powered Document Management for SMBs
 
-> Sube una factura. En 10 segundos tienes todos los datos extraídos, clasificados y listos para analizar.
+> Upload an invoice. In ~10 seconds you get every field extracted, classified and ready to analyze.
 
-**Lexia** es una plataforma web SaaS que usa **Inteligencia Artificial** para automatizar la gestión documental de empresas españolas. Está orientada a pymes, autónomos y gestorías que todavía procesan facturas y contratos de forma manual.
+**Lexia** is a multi-tenant **SaaS platform** that uses AI to automate document management for small and medium businesses, freelancers and accounting firms (*gestorías*) that still process invoices and contracts by hand.
 
-URL de producción: [https://lexia.es](https://lexia.es)
+<p>
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js_16-000000?style=flat&logo=next.js&logoColor=white" />
+  <img alt="React" src="https://img.shields.io/badge/React_19-20232A?style=flat&logo=react&logoColor=61DAFB" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" />
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_v4-38BDF8?style=flat&logo=tailwindcss&logoColor=white" />
+  <img alt="Supabase" src="https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white" />
+  <img alt="Claude" src="https://img.shields.io/badge/Claude_AI-D97757?style=flat&logo=anthropic&logoColor=white" />
+  <img alt="Stripe" src="https://img.shields.io/badge/Stripe-635BFF?style=flat&logo=stripe&logoColor=white" />
+  <img alt="Clerk" src="https://img.shields.io/badge/Clerk-6C47FF?style=flat&logo=clerk&logoColor=white" />
+  <img alt="Inngest" src="https://img.shields.io/badge/Inngest-000000?style=flat&logo=inngest&logoColor=white" />
+  <img alt="Sentry" src="https://img.shields.io/badge/Sentry-362D59?style=flat&logo=sentry&logoColor=white" />
+  <img alt="Vitest" src="https://img.shields.io/badge/Vitest-6E9F18?style=flat&logo=vitest&logoColor=white" />
+</p>
 
----
+🌐 Production: **[lexia.es](https://lexia.es)** &nbsp;·&nbsp; 🇪🇸 *A Spanish version of this document is available on request.*
 
-## ¿Qué problema resuelve?
-
-Una pyme española recibe decenas de facturas al mes en PDF o papel escaneado. Alguien tiene que abrirlas una a una, apuntar el proveedor, el importe, la fecha y el IVA en una hoja de Excel. Es tedioso, propenso a errores y consume horas de trabajo.
-
-**Lexia elimina ese proceso.** Subes el documento y la IA hace el resto.
-
----
-
-## Funcionalidades
-
-| Función | Descripción |
-|---------|-------------|
-| **Extracción automática** | Lee PDFs e imágenes y extrae: proveedor, importe, fecha, IVA, tipo de documento y categoría de gasto |
-| **OCR inteligente** | Procesa documentos escaneados con Tesseract (preprocesado con Sharp: escala de grises, contraste, nitidez) |
-| **Chat con IA** | Responde preguntas en lenguaje natural: "¿Cuánto gasté en electricidad este trimestre?" |
-| **Dashboard de métricas** | Gráficos de gastos mensuales, proveedores más frecuentes y tendencias |
-| **Exportación a Excel** | Descarga todos tus documentos filtrados en formato .xlsx con un clic |
-| **Modo gestoría** | Gestiona múltiples empresas clientes desde un único panel centralizado |
-| **White-label** | Ofrece la plataforma bajo tu propia marca, colores y dominio personalizado |
-| **Emails automáticos** | Bienvenida, documento procesado, límite alcanzado, invitaciones a clientes |
-| **Reintentar extracción** | Si un documento falla, un botón relanza el pipeline de IA sin soporte técnico |
-| **Onboarding guiado** | Checklist de 3 pasos para que los nuevos usuarios empiecen en minutos |
+<!-- TODO: screenshot — dashboard with expense charts -->
 
 ---
 
-## Seguridad y cumplimiento
+## The problem it solves
 
-| Área | Implementación |
-|------|---------------|
-| **Rate limiting** | 10 subidas/min y 20 mensajes de chat/min por usuario (en memoria, HTTP 429) |
-| **Validación de archivos** | Magic bytes — verifica el contenido real del archivo, no solo la extensión |
-| **Aislamiento multi-tenant** | Row Level Security en Supabase — cada organización ve solo sus datos |
-| **RGPD art. 17** | `DELETE /api/account/delete` borra todos los datos del usuario y su cuenta de Clerk |
-| **Política de privacidad** | Página `/privacy` con base jurídica, destinatarios, plazos de retención y derechos |
-| **Términos de servicio** | Página `/terms` con precios, cancelación, uso aceptable y ley española aplicable |
-| **Consentimiento de cookies** | Banner con opciones "Esenciales" / "Aceptar todas" |
-| **Monitorización de errores** | Sentry captura excepciones en cliente y servidor; ignora errores 4xx esperados |
-| **Headers de seguridad** | X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy |
+A typical SMB receives dozens of invoices a month as PDFs or scanned paper. Someone has to open them one by one and copy the supplier, amount, date and VAT into a spreadsheet. It is tedious, error-prone and eats hours of work every week.
+
+**Lexia removes that process.** You upload the document and the AI does the rest — extraction, classification and a natural-language chat on top of your data.
 
 ---
 
-## Arquitectura general
+## Key features
+
+- **Automatic data extraction** — reads PDFs and images and extracts supplier, amount, date, VAT, document type and expense category as structured JSON (Claude AI).
+- **OCR for scanned documents** — Tesseract.js with a Sharp preprocessing step (grayscale, contrast, sharpening) so it works even on poor-quality scans.
+- **AI chat over your documents** — answer natural-language questions such as *"How much did I spend on electricity this quarter?"* against your stored data.
+- **Metrics dashboard** — monthly expense charts, most frequent suppliers and trends (Recharts).
+- **One-click Excel export** — download filtered documents as `.xlsx`.
+- **Accounting-firm mode (*gestoría*)** — manage multiple client companies from a single centralized panel, with per-client impersonation.
+- **White-label** — firms can serve the whole platform under their own brand, colors and custom domain.
+- **Asynchronous processing** — OCR + AI run as background jobs (Inngest), so the UI never blocks; failed extractions can be re-run with one click.
+- **Transactional emails** — welcome, document processed, limit reached and client invitations (Resend).
+- **Guided onboarding** — a 3-step checklist to get new users productive in minutes.
+
+## Security & compliance
+
+- **Multi-tenant isolation** via PostgreSQL Row Level Security — an organization can never read another's data.
+- **File validation by magic bytes** — verifies the real file content, not just the extension.
+- **Rate limiting** — 10 uploads/min and 20 chat messages/min per user (HTTP 429).
+- **GDPR** — right to erasure (art. 17) endpoint that deletes all user data and the Clerk account; real privacy policy and terms pages; cookie-consent banner.
+- **Error monitoring** — Sentry on client and server, ignoring expected 4xx errors.
+- **Security headers** — X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy.
+
+---
+
+## Tech stack
+
+| Layer | Technologies |
+|---|---|
+| **Frontend** | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Radix UI, Framer Motion, Recharts |
+| **Backend** | Next.js Route Handlers, Supabase (PostgreSQL + Storage), Zod |
+| **AI / OCR** | Anthropic Claude, Tesseract.js, Sharp |
+| **Auth & billing** | Clerk (auth), Stripe (subscriptions & billing portal) |
+| **Async & email** | Inngest (background jobs), Resend (transactional email) |
+| **Ops & quality** | Sentry, Vitest, GitHub Actions (CI), Vercel |
+
+---
+
+## How an invoice flows through the system
 
 ```
-USUARIO
-  │
-  ▼
-[ Landing Page ]  →  [ Registro / Login (Clerk) ]
-                              │
-                              ▼
-                    [ Panel de la App ]
-                    ┌─────────────────────────────┐
-                    │  Dashboard  │  Documentos   │
-                    │  Chat IA    │  Configuración│
-                    └─────────────────────────────┘
-                              │
-              ┌───────────────┼───────────────┐
-              ▼               ▼               ▼
-        [ Supabase ]   [ Claude AI ]    [ Inngest ]
-        Base de datos   Extracción      Jobs en
-        + Storage       y Chat          segundo plano
-              │
-        [ Stripe ]         [ Sentry ]       [ Resend ]
-        Pagos              Errores          Emails
-```
-
-**Flujo de una factura:**
-1. El usuario sube un PDF o imagen → rate limit + validación de magic bytes
-2. El archivo se guarda en Supabase Storage
-3. Inngest lanza un job en segundo plano (`lexia/document.uploaded`)
-4. Si es imagen, Tesseract OCR extrae el texto (traineddata desde Supabase Storage → `/tmp`)
-5. Claude AI analiza el contenido y devuelve los campos estructurados en JSON
-6. Los datos se guardan en `document_extractions`; se envía email al usuario
-7. El usuario ve el resultado — si hay error, puede reintentarlo con un clic
-
----
-
-## Tecnologías
-
-### Frontend
-
-| Tecnología | Para qué sirve |
-|------------|---------------|
-| **Next.js 16** | Framework web: páginas, rutas y API del servidor |
-| **React 19** | Biblioteca para construir la interfaz de usuario |
-| **Tailwind CSS v4** | Sistema de diseño: colores, espaciados, tipografía |
-| **Framer Motion** | Animaciones en la landing page (partículas, transiciones) |
-| **Recharts** | Gráficos interactivos del dashboard |
-| **Radix UI** | Componentes accesibles: modales, menús, switches, tooltips |
-
-### Backend
-
-| Tecnología | Para qué sirve |
-|------------|---------------|
-| **Supabase** | Base de datos PostgreSQL + almacenamiento de archivos |
-| **Clerk** | Autenticación: registro, login, gestión de sesiones |
-| **Anthropic Claude AI** | Extracción de datos de documentos y chat conversacional |
-| **Tesseract.js** | OCR para facturas escaneadas |
-| **Sharp** | Preprocesado de imágenes antes del OCR |
-| **Inngest** | Cola de trabajos en segundo plano (procesamiento asíncrono) |
-| **Stripe** | Pagos, suscripciones y portal de facturación |
-| **Resend** | Emails transaccionales desde `hola@lexia.es` |
-| **Sentry** | Monitorización de errores en cliente y servidor |
-| **Zod** | Validación de datos en el servidor |
-
-### Infraestructura y calidad
-
-| Tecnología | Para qué sirve |
-|------------|---------------|
-| **Vercel** | Hosting y despliegue automático en cada push |
-| **GitHub Actions** | CI: ejecuta tests + build en cada PR |
-| **Vitest** | Tests unitarios e integración |
-| **TypeScript** | Tipado estático en todo el proyecto |
-
----
-
-## Estructura de carpetas
-
-```
-lexia/
-│
-├── app/                          # Páginas y rutas (Next.js App Router)
-│   ├── page.tsx                  # Landing page pública
-│   ├── layout.tsx                # Layout raíz: fuentes, Sentry, CookieBanner
-│   ├── error.tsx                 # Página de error global con Sentry
-│   ├── not-found.tsx             # Página 404 con branding Lexia
-│   │
-│   ├── (app)/                    # Rutas autenticadas
-│   │   ├── app/dashboard/        # Panel principal con métricas y onboarding
-│   │   ├── app/documents/        # Lista y detalle de documentos
-│   │   ├── app/chat/             # Chat con IA
-│   │   ├── app/upgrade/          # Planes y precios
-│   │   ├── gestoria/             # Panel de gestoría
-│   │   └── settings/whitelabel/  # Configuración white-label
-│   │
-│   ├── (auth)/                   # Login y registro (Clerk)
-│   │
-│   ├── (legal)/                  # Páginas legales RGPD
-│   │   ├── privacy/              # Política de privacidad
-│   │   └── terms/                # Términos de servicio
-│   │
-│   └── api/                      # API REST del servidor
-│       ├── documents/            # CRUD + paginación
-│       ├── documents/[id]/retry/ # Reintentar extracción fallida
-│       ├── account/delete/       # Borrado de cuenta (RGPD art. 17)
-│       ├── chat/                 # Chat IA con streaming
-│       ├── stats/                # Métricas del dashboard
-│       ├── export/               # Exportación Excel
-│       ├── gestoria/             # API gestión de clientes
-│       ├── whitelabel/           # API configuración de marca
-│       ├── stripe/               # Checkout y portal Stripe
-│       └── webhooks/             # Clerk · Stripe · Inngest
-│
-├── components/
-│   ├── landing/                  # Secciones de la landing page
-│   │   └── effects/              # Partículas, progreso de scroll, cursor glow
-│   ├── app/                      # Componentes del panel
-│   │   ├── ExtractionCard.tsx    # Datos extraídos + botón Reintentar
-│   │   ├── OnboardingChecklist.tsx # 3 pasos guiados para usuarios nuevos
-│   │   ├── StatsOverview.tsx     # Tarjetas de resumen
-│   │   └── charts/               # Gráficos: tipo, gasto mensual, proveedores
-│   ├── CookieBanner.tsx          # Banner de consentimiento de cookies
-│   └── ui/                       # Componentes base Radix UI + Tailwind
-│
-├── lib/
-│   ├── claude/extractor.ts       # Llama a Claude AI para extraer datos
-│   ├── ocr/                      # preprocess.ts → extractor.ts → index.ts
-│   ├── stripe/
-│   │   ├── constants.ts          # PLAN_PRICES — única fuente de verdad de precios
-│   │   └── limits.ts             # checkDocumentLimit, checkClientLimit
-│   ├── email/                    # sender.ts + templates.ts
-│   ├── whitelabel/               # resolver.ts + theme-context.tsx
-│   ├── supabase/                 # server.ts + client.ts + storage.ts
-│   └── utils/
-│       ├── rateLimit.ts          # Rate limiter en memoria (ventana fija)
-│       ├── auth.ts               # getAuthenticatedUser
-│       ├── errors.ts             # handleApiError
-│       ├── export.ts             # Generación de Excel
-│       └── validators.ts         # Zod schemas + validateMimeType
-│
-├── inngest/
-│   └── functions/
-│       ├── processDocument.ts    # OCR + extracción IA + email de notificación
-│       └── monthlySummary.ts     # Resumen mensual automático
-│
-├── sentry.client.config.ts       # Sentry: navegador (replay, filtro 4xx)
-├── sentry.server.config.ts       # Sentry: servidor Node.js
-├── instrumentation.ts            # Punto de entrada Next.js 15+ para Sentry
-│
-├── types/database.ts             # Tipos TypeScript de toda la BD
-├── supabase/migrations/          # Scripts SQL: schema, RLS, billing, gestoría, rebrand
-│
-├── tests/
-│   ├── unit/claude/              # Tests del extractor de Claude
-│   ├── integration/api/          # Tests de endpoints documents y chat
-│   └── setup.ts                  # Mocks de env vars para tests
-│
-├── .github/workflows/ci.yml      # CI: pnpm test + pnpm build en cada PR
-└── PLAN.md                       # Plan de producción con estado de cada fase
+Upload (PDF/image)
+   │  rate limit + magic-byte validation
+   ▼
+Supabase Storage ──► Inngest job (lexia/document.uploaded)
+                          │
+                          ├─ image? ─► Tesseract OCR (Sharp preprocess)
+                          ▼
+                     Claude AI ─► structured JSON (supplier, amount, VAT, ...)
+                          ▼
+              document_extractions (Postgres) ─► email notification
+                          ▼
+                 User sees the result · retry on failure
 ```
 
 ---
 
-## Modelos de datos principales
+## Getting started
 
-| Tabla | Descripción |
-|-------|-------------|
-| `organizations` | Empresa cliente. Plan, tipo (empresa/gestoría), suscripción Stripe |
-| `users` | Usuario vinculado a una organización. Rol: owner / admin / member |
-| `documents` | Archivo subido. Estado: pending → processing → done / error |
-| `document_extractions` | Datos extraídos: proveedor, importe, fecha, IVA, confianza, OCR usado |
-| `chat_messages` | Conversación con la IA por organización |
-| `whitelabel_configs` | Marca, colores, logo, dominio y textos para gestorías white-label |
-
-Todas las tablas tienen **Row Level Security** activa — una organización nunca puede acceder a los datos de otra.
-
----
-
-## Planes
-
-| Plan | Precio | Para quién |
-|------|--------|-----------|
-| **Trial** | Gratis | Prueba con 2 documentos, sin tarjeta |
-| **Pro** | 10 €/mes | Pymes y autónomos — 20 docs/mes |
-| **Gestoría** | 49 €/mes | Gestorías — hasta 50 empresas clientes |
-| **Gestoría Pro** | 99 €/mes | Gestorías grandes — clientes ilimitados |
-| **White-Label** | 299 €/mes | Plataforma bajo marca propia, 100 clientes |
-| **White-Label Pro** | 599 €/mes | Clientes ilimitados + dominio personalizado |
-
-Los precios se definen en un único lugar: `lib/stripe/constants.ts → PLAN_PRICES`.
-
----
-
-## Variables de entorno
+Requirements: **Node.js 24** and **pnpm 10** (the versions used in CI).
 
 ```bash
-# Inteligencia Artificial
-ANTHROPIC_API_KEY=
-
-# Base de datos (Supabase)
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-
-# Autenticación (Clerk)
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
-CLERK_WEBHOOK_SECRET=
-
-# Pagos (Stripe)
-STRIPE_SECRET_KEY=
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
-STRIPE_WEBHOOK_SECRET=
-STRIPE_GESTORIA_PRICE_ID=
-STRIPE_GESTORIA_PRO_PRICE_ID=
-STRIPE_WL_PRICE_ID=
-STRIPE_WL_PRO_PRICE_ID=
-
-# Email (Resend)
-RESEND_API_KEY=
-
-# Jobs en segundo plano (Inngest)
-INNGEST_EVENT_KEY=
-INNGEST_SIGNING_KEY=
-
-# Monitorización de errores (Sentry) — opcional en local
-NEXT_PUBLIC_SENTRY_DSN=
-SENTRY_ORG=
-SENTRY_PROJECT=
-SENTRY_AUTH_TOKEN=   # Solo necesario en CI para subir source maps
-
-# App
-NEXT_PUBLIC_APP_URL=https://lexia.es
-TESSERACT_LANG=spa+eng   # Idiomas OCR, por defecto español + inglés
+pnpm install                 # install dependencies
+cp .env.example .env.local   # fill in your keys (see below)
+pnpm inngest:dev             # start the local Inngest server (background jobs)
+pnpm dev                     # start the app on http://localhost:3000
 ```
 
----
-
-## Comandos
+Useful scripts (from `package.json`):
 
 ```bash
-pnpm install          # Instalar dependencias
-pnpm dev              # Servidor de desarrollo local
-pnpm build            # Build de producción (verifica TypeScript)
-pnpm test             # Tests unitarios e integración (Vitest)
-pnpm test:coverage    # Informe de cobertura de código
-pnpm inngest:dev      # Servidor local de Inngest (jobs en segundo plano)
-pnpm test:ocr         # Probar el pipeline de OCR
-pnpm test:extractor   # Probar la extracción de documentos
+pnpm build            # production build (also type-checks)
+pnpm test             # unit + integration tests (Vitest)
+pnpm test:coverage    # coverage report
+pnpm test:ocr         # exercise the OCR pipeline
+pnpm test:extractor   # exercise the document extractor
 ```
 
----
+Minimum environment variables (full list in `.env.example`): `ANTHROPIC_API_KEY`, the three `SUPABASE` keys, the `CLERK` keys, the `STRIPE` keys, `RESEND_API_KEY` and the `INNGEST` keys. Sentry variables are optional in local development.
 
-## CI / CD
-
-GitHub Actions ejecuta en cada PR:
-1. `pnpm install --frozen-lockfile`
-2. `pnpm test --run` — con variables de entorno mockeadas
-3. `pnpm build` — usando secrets del repositorio
-
-El workflow está en `.github/workflows/ci.yml`.
+> **Note:** to run OCR you must upload `spa.traineddata` and `eng.traineddata` to a public `traineddata` bucket in Supabase Storage.
 
 ---
 
-## Cómo desplegar
+## Project structure
 
-1. Fork del repositorio en GitHub
-2. Conecta el repo en [vercel.com](https://vercel.com)
-3. Añade todas las variables de entorno en Vercel
-4. Ejecuta las migraciones SQL en Supabase (`supabase/migrations/` en orden)
-5. Sube `spa.traineddata` y `eng.traineddata` al bucket `traineddata` de Supabase Storage (público)
-6. Configura webhooks de Clerk, Stripe e Inngest apuntando a `https://tu-dominio/api/webhooks/...`
+```
+app/
+├── (app)/            # authenticated area: dashboard, documents, chat, settings,
+│                     #   gestoria/ (client management), settings/whitelabel/
+├── (auth)/           # Clerk sign-in / sign-up
+├── (legal)/          # GDPR privacy policy & terms
+└── api/              # REST route handlers
+    ├── documents/    #   CRUD, upload, [id]/retry (re-run a failed extraction)
+    ├── chat/         #   AI chat with history
+    ├── stripe/       #   checkout & billing portal
+    ├── gestoria/     #   client management + impersonation
+    ├── whitelabel/   #   branding & custom-domain config
+    └── webhooks/     #   Clerk · Stripe · Inngest
+lib/
+├── claude/           # AI extractor, prompts, output schemas
+├── ocr/              # preprocess → extractor → index
+├── stripe/           # PLAN_PRICES (single source of truth) + plan limits
+├── whitelabel/       # domain resolver + theme context
+└── utils/            # rate limiter, auth, error handling, Excel export, validators
+inngest/functions/    # processDocument (OCR + AI + email), monthlySummary
+supabase/migrations/  # schema, RLS policies, billing, gestoria, rebrand
+tests/                # unit (Claude extractor) + integration (documents & chat APIs)
+```
 
-Cada `git push` despliega automáticamente una nueva versión en Vercel.
+### Core data model
+
+`organizations` · `users` · `documents` (pending → processing → done/error) · `document_extractions` · `chat_messages` · `whitelabel_configs`. Every table is protected by Row Level Security.
 
 ---
 
-## Lo que hace a Lexia diferente
+## What I learned building this
 
-- **OCR real**: preprocesa imágenes con Sharp antes del OCR — extrae texto incluso de facturas escaneadas de mala calidad.
-- **Chat con contexto documental**: no es solo extracción. El asistente responde preguntas complejas sobre tus documentos almacenados.
-- **Multi-tenant seguro**: Row Level Security garantiza aislamiento completo entre organizaciones a nivel de base de datos.
-- **White-label nativo**: gestorías pueden ofrecer toda la plataforma bajo su propia marca y dominio sin que sus clientes sepan que usan Lexia.
-- **Procesamiento asíncrono**: OCR + IA en segundo plano con Inngest — la interfaz nunca se bloquea.
-- **RGPD completo**: política de privacidad real, derecho al olvido (art. 17), consentimiento de cookies, términos de servicio bajo ley española.
-
----
-
-## Licencia
-
-Proyecto privado. Todos los derechos reservados.
+- Designing a **secure multi-tenant SaaS** where data isolation is enforced at the database layer (RLS), not just in application code.
+- Building a resilient **async pipeline** (upload → OCR → AI → notify) with a job runner, so a slow AI call never blocks the UI and failures are recoverable.
+- Integrating a real **billing system** end to end: Stripe checkout, subscription plans, usage limits and a webhook-driven state machine.
+- Taking a product to **production-grade quality**: CI, tests, error monitoring, GDPR compliance and security headers — not just a happy-path demo.
+- Modeling a real business domain (**invoicing for SMBs and accounting firms**), combining my software background with my finance/accounting training.
 
 ---
 
-*Construido con Next.js 16 · React 19 · Claude AI · Supabase · Clerk · Stripe · Inngest · Sentry · Vercel*
+## License
+
+Private project. All rights reserved.
